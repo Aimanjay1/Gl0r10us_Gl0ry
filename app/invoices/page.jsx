@@ -9,7 +9,6 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { warn } from "console";
 import Link from "next/link";
 
 function Cell({ children }) {
@@ -17,6 +16,14 @@ function Cell({ children }) {
         <TableCell className={"text-center"}>
             {children}
         </TableCell>
+    )
+}
+
+function InvoiceButton({ children }) {
+    return (
+        <Button className={"bg-identity-dillute hover:bg-identity"}>
+            {children}
+        </Button>
     )
 }
 
@@ -60,12 +67,12 @@ export default function Invoice(props) {
                                 {value.DueDate}
                             </Cell>
                             <Cell>
-                                <Button>
+                                <InvoiceButton>
                                     Invoice
-                                </Button>
+                                </InvoiceButton>
                             </Cell>
                             <Cell>
-                                <Button>send email</Button>
+                                <InvoiceButton>send email</InvoiceButton>
                             </Cell>
                             <Cell>
                                 <Link
