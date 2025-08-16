@@ -1,4 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
+import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+import { AppSidebar } from "@/components/AppSidebar"
 
 import "./globals.css";
 import Header from "@/components/Header";
@@ -22,8 +24,15 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <Header />
-        {children}
+        <SidebarProvider defaultOpen={false} className="flex-row">
+          {/* Sidebar sits as a sibling to the content and reserves space */}
+          <AppSidebar />
+          {/* SidebarInset offsets content based on sidebar state/variant */}
+          <SidebarInset>
+            <Header />
+            {children}
+          </SidebarInset>
+        </SidebarProvider>
       </body>
     </html>
   );

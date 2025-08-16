@@ -1,4 +1,5 @@
 
+import { AppSidebar } from "@/components/AppSidebar";
 import { Button } from "@/components/ui/button";
 import {
     Table,
@@ -43,7 +44,9 @@ export default function Invoice(props) {
                     <TableRow className={"bg-accent"}>
                         <TableHead>Customers</TableHead>
                         <TableHead>Status</TableHead>
-                        <TableHead>Order Date</TableHead>
+                        <TableHead>Order Date
+
+                        </TableHead>
                         <TableHead>Due Date</TableHead>
                         <TableHead>Generate Invoice</TableHead>
                         <TableHead>Send an email</TableHead>
