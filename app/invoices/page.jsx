@@ -12,6 +12,14 @@ import {
 } from "@/components/ui/table"
 import Link from "next/link";
 
+function TH({ children }) {
+    return (
+        <TableHead className={"text-center"}>
+            {children}
+        </TableHead>
+    )
+}
+
 function Cell({ children }) {
     return (
         <TableCell className={"text-center"}>
@@ -28,8 +36,15 @@ function InvoiceButton({ children }) {
     )
 }
 
-export default function Invoice(props) {
+export default async function Invoice(props) {
 
+    // note: relative URLs from a Server Component
+    const res = await fetch('http://localhost:5000', {
+        // disable caching so you always get fresh data
+        cache: 'no-store',
+    })
+    if (!res.ok) throw new Error('Failed to load invoices')
+    const invoices = await res.json()
 
     return (
         <main className="flex flex-col h-min-full w-full p-4 lg:p-0 ">
@@ -42,31 +57,31 @@ export default function Invoice(props) {
             <Table className={"container mx-auto border-2 border-identity-dillute/20 rounded-xl "}>
                 <TableHeader >
                     <TableRow className={"bg-accent rounded-xl"}>
-                        <TableHead>Customers</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Order Date
+                        <TH>Customers</TH>
+                        <TH>Status</TH>
+                        <TH>Order Date
 
-                        </TableHead>
-                        <TableHead>Due Date</TableHead>
-                        <TableHead>Generate Invoice</TableHead>
-                        <TableHead>Send an email</TableHead>
-                        <TableHead>Receipt</TableHead>
+                        </TH>
+                        <TH>Due Date</TH>
+                        <TH>Generate Invoice</TH>
+                        <TH>Send an email</TH>
+                        <TH>Receipt</TH>
                     </TableRow>
                 </TableHeader>
                 <TableBody>{
-                    dummyCustomers.map((value, index) => (
+                    invoices.map((invoice, index) => (
                         <TableRow key={index} >
                             <Cell>
-                                {value.Name}
+                                {invoice.UserId}
                             </Cell>
                             <Cell>
-                                {value.InvoiceStatus}
+                                {invoice.Status}
                             </Cell>
                             <Cell>
-                                {value.OrderDate}
+                                {invoice.OrderDate}
                             </Cell>
                             <Cell>
-                                {value.DueDate}
+                                {invoice.DueDate}
                             </Cell>
                             <Cell>
                                 <InvoiceButton>
@@ -78,8 +93,9 @@ export default function Invoice(props) {
                             </Cell>
                             <Cell>
                                 <Link
-                                    href={value.Receipt.Link}>
-                                    {value.Receipt.ReceiptId}
+                                    href={"/invoices"}>
+                                    {""}
+                                    {/* Later to be changed */}
                                 </Link>
                             </Cell>
                         </TableRow>
@@ -97,87 +113,23 @@ export default function Invoice(props) {
 
 const dummyCustomers = [
     {
-        CustomerId: "CS0001",
-        Name: "Joanne Lee",
-        InvoiceStatus: "Cancelled",
+        InvoiceId: "INV0001",
+        ClientId: "CS0001",
+        UserId: "US0001",
+        Status: "Cancelled",
         OrderDate: "DD/MM/YYYY",
         DueDate: "DD/MM/YYYY",
-        InvoiceLink: "https://answerspace.mimoimio.com",
-        Receipt: {
-            Link: "https://answerspace.mimoimio.com",
-            ReceiptId: "INV0001.jpeg"
-        }
-    },
-    {
-        CustomerId: "CS0001",
-        Name: "Joanne Lee",
-        InvoiceStatus: "Cancelled",
-        OrderDate: "DD/MM/YYYY",
-        DueDate: "DD/MM/YYYY",
-        InvoiceLink: "https://answerspace.mimoimio.com",
-        Receipt: {
-            Link: "https://answerspace.mimoimio.com",
-            ReceiptId: "INV0001.jpeg"
-        }
-    },
-    {
-        CustomerId: "CS0001",
-        Name: "Joanne Lee",
-        InvoiceStatus: "Cancelled",
-        OrderDate: "DD/MM/YYYY",
-        DueDate: "DD/MM/YYYY",
-        InvoiceLink: "https://answerspace.mimoimio.com",
-        Receipt: {
-            Link: "https://answerspace.mimoimio.com",
-            ReceiptId: "INV0001.jpeg"
-        }
-    },
-    {
-        CustomerId: "CS0001",
-        Name: "Joanne Lee",
-        InvoiceStatus: "Cancelled",
-        OrderDate: "DD/MM/YYYY",
-        DueDate: "DD/MM/YYYY",
-        InvoiceLink: "https://answerspace.mimoimio.com",
-        Receipt: {
-            Link: "https://answerspace.mimoimio.com",
-            ReceiptId: "INV0001.jpeg"
-        }
-    },
-    {
-        CustomerId: "CS0001",
-        Name: "Joanne Lee",
-        InvoiceStatus: "Cancelled",
-        OrderDate: "DD/MM/YYYY",
-        DueDate: "DD/MM/YYYY",
-        InvoiceLink: "https://answerspace.mimoimio.com",
-        Receipt: {
-            Link: "https://answerspace.mimoimio.com",
-            ReceiptId: "INV0001.jpeg"
-        }
-    },
-    {
-        CustomerId: "CS0001",
-        Name: "Joanne Lee",
-        InvoiceStatus: "Cancelled",
-        OrderDate: "DD/MM/YYYY",
-        DueDate: "DD/MM/YYYY",
-        InvoiceLink: "https://answerspace.mimoimio.com",
-        Receipt: {
-            Link: "https://answerspace.mimoimio.com",
-            ReceiptId: "INV0001.jpeg"
-        }
-    },
-    {
-        CustomerId: "CS0001",
-        Name: "Joanne Lee",
-        InvoiceStatus: "Cancelled",
-        OrderDate: "DD/MM/YYYY",
-        DueDate: "DD/MM/YYYY",
-        InvoiceLink: "https://answerspace.mimoimio.com",
-        Receipt: {
-            Link: "https://answerspace.mimoimio.com",
-            ReceiptId: "INV0001.jpeg"
-        }
+        TotalAmount: 1000,
+        CreatedAt: "DD/MM/YYYY HH:MM:SS",
+
+        InvoicePdfFileName: "",
+        EmailMessageId: "",
+        EmaiThreadId: "",
+        InvoiceEmailSentAt: "",
+
+        Client: {},
+        User: {},
+        Items: {},
+        Receipts: {}
     },
 ];
