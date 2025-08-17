@@ -32,16 +32,16 @@ export default function Invoice(props) {
 
 
     return (
-        <main className="flex flex-col h-min-full w-full">
+        <main className="flex flex-col h-min-full w-full p-4 lg:p-0 ">
             <div className="container mx-auto my-12">
                 <h1 className="text-5xl font-bold mb-8">Invoices</h1>
                 <p>Generate invoices with just a click of a button</p>
             </div>
 
 
-            <Table className={"container mx-auto"}>
-                <TableHeader>
-                    <TableRow className={"bg-accent"}>
+            <Table className={"container mx-auto border-2 border-identity-dillute/20 rounded-xl "}>
+                <TableHeader >
+                    <TableRow className={"bg-accent rounded-xl"}>
                         <TableHead>Customers</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead>Order Date
@@ -53,7 +53,6 @@ export default function Invoice(props) {
                         <TableHead>Receipt</TableHead>
                     </TableRow>
                 </TableHeader>
-
                 <TableBody>{
                     dummyCustomers.map((value, index) => (
                         <TableRow key={index} >
