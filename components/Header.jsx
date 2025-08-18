@@ -7,7 +7,6 @@ import { SidebarTrigger } from "./ui/sidebar";
 export default function Header(props) {
     return (
         <div className="flex w-full bg-accent py-4 items-center justify-between ">
-
             <div className="flex gap-4 px-2 ">
                 {/* <Button className="bg-accent hover:bg-accent/20 hover:-translate-y-0.5 hover:shadow-xl">
                     <HamburgerMenuIcon className="text-primary w-8 h-8" />

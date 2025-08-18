@@ -43,6 +43,12 @@ export function AppSidebar() {
                             </SidebarMenuButton>
                         </SidebarMenuItem>
 
+                        <SidebarMenuItem>
+                            <SidebarMenuButton>
+                                <Link href={"/clients"} className="flex w-full">Clients</Link>
+                            </SidebarMenuButton>
+                        </SidebarMenuItem>
+
                     </SidebarMenu>
                 </SidebarGroup>
                 <SidebarGroup />

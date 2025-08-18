@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/table"
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import { getBackEndURL } from "@/lib/utils";
 
 function TH({ children }) {
     return (
@@ -41,9 +42,9 @@ export default async function Invoice(props) {
 
     let invoices = [];
     try {
-        const res = await fetch('http://localhost:5000', { cache: 'no-store' });
-        if (!res.ok) throw new Error('Failed to load invoices');
-        invoices = await res.json();
+        const res = await fetch(`${getBackEndURL()}/api/Invoices`, { cache: 'no-store' });
+        // if (!res.ok) throw new Error('Failed to load invoices');
+        if (res.ok) invoices = await res.json();
     } catch (e) {
         console.error("Failed to load invoices", e);
         // Optionally set invoices to a fallback value or show an error message
@@ -56,62 +57,67 @@ export default async function Invoice(props) {
                 <p>Generate invoices with just a click of a button</p>
             </div>
 
+            <div className="container mx-auto">
+                <Link className="bg-identity object m-4 p-2 text-background rounded-sm w-fit" href={"invoices/new"}>Add New Invoice</Link>
+            </div>
             {
 
                 invoices.length > 0 ?
-                    <Table className={"container mx-auto border-2 border-identity-dillute/20 rounded-xl "}>
-                        <TableHeader >
-                            <TableRow className={"bg-accent rounded-xl"}>
-                                <TH>Customers</TH>
-                                <TH>Status</TH>
-                                <TH>Order Date
+                    (<>
+                        <Table className={"container mx-auto border-2 border-identity-dillute/20 rounded-xl "}>
+                            <TableHeader >
+                                <TableRow className={"bg-accent rounded-xl"}>
+                                    <TH>Customers</TH>
+                                    <TH>Status</TH>
+                                    <TH>Order Date
 
-                                </TH>
-                                <TH>Due Date</TH>
-                                <TH>Generate Invoice</TH>
-                                <TH>Send an email</TH>
-                                <TH>Receipt</TH>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {
-                                invoices.map((invoice, index) => (
-                                    <TableRow key={index} >
-                                        <Cell>
-                                            {invoice.UserId}
-                                        </Cell>
-                                        <Cell>
-                                            {invoice.Status}
-                                        </Cell>
-                                        <Cell>
-                                            {invoice.OrderDate}
-                                        </Cell>
-                                        <Cell>
-                                            {invoice.DueDate}
-                                        </Cell>
-                                        <Cell>
-                                            <InvoiceButton>
-                                                Invoice
-                                            </InvoiceButton>
-                                        </Cell>
-                                        <Cell>
-                                            <InvoiceButton>send email</InvoiceButton>
-                                        </Cell>
-                                        <Cell>
-                                            <Link
-                                                href={"/invoices"}>
-                                                {""}
-                                                {/* Later to be changed */}
-                                            </Link>
-                                        </Cell>
-                                    </TableRow>
-                                ))
-                            }
+                                    </TH>
+                                    <TH>Due Date</TH>
+                                    <TH>Generate Invoice</TH>
+                                    <TH>Send an email</TH>
+                                    <TH>Receipt</TH>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {
+                                    invoices.map((invoice, index) => (
+                                        <TableRow key={index} >
+                                            <Cell>
+                                                {invoice.UserId}
+                                            </Cell>
+                                            <Cell>
+                                                {invoice.Status}
+                                            </Cell>
+                                            <Cell>
+                                                {invoice.OrderDate}
+                                            </Cell>
+                                            <Cell>
+                                                {invoice.DueDate}
+                                            </Cell>
+                                            <Cell>
+                                                <InvoiceButton>
+                                                    Invoice
+                                                </InvoiceButton>
+                                            </Cell>
+                                            <Cell>
+                                                <InvoiceButton>send email</InvoiceButton>
+                                            </Cell>
+                                            <Cell>
+                                                <Link
+                                                    href={"/invoices"}>
+                                                    {""}
+                                                    {/* Later to be changed */}
+                                                </Link>
+                                            </Cell>
+                                        </TableRow>
+                                    ))
+                                }
 
 
-                        </TableBody>
+                            </TableBody>
 
-                    </Table>
+                        </Table>
+                    </>)
                     :
                     (<>
                         <Badge variant={"destructive"} className={"mx-auto"}>Failed to load invoices</Badge>
