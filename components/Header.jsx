@@ -1,5 +1,3 @@
-import { HamburgerMenuIcon } from "@radix-ui/react-icons"
-import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/avatar";
 import Link from "next/link";
 import { SidebarTrigger } from "./ui/sidebar";

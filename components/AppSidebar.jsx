@@ -8,11 +8,20 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
     SidebarSeparator,
-    SidebarTrigger,
+    useSidebar
 } from "@/components/ui/sidebar"
 import Link from "next/link"
+import LogoutButton from "./LogoutButton"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 export function AppSidebar() {
+    const sidebar = useSidebar();
+    const isMobile = useIsMobile();
+
+    function handleSidebarToggle() {
+        if (isMobile) sidebar.toggleSidebar();
+    }
+
     return (
 
         <Sidebar >
@@ -27,25 +36,31 @@ export function AppSidebar() {
                     <SidebarMenu>
                         <SidebarMenuItem>
                             <SidebarMenuButton>
-                                <Link href={"/"} className="flex w-full">Dashboard</Link>
+                                <Link href={"/"} onClick={handleSidebarToggle} className="flex w-full">Dashboard</Link>
                             </SidebarMenuButton>
                         </SidebarMenuItem>
 
                         <SidebarMenuItem>
                             <SidebarMenuButton>
-                                <Link href={"/invoices"} className="flex w-full">Invoices</Link>
+                                <Link href={"/invoices"} onClick={handleSidebarToggle} className="flex w-full">Invoices</Link>
                             </SidebarMenuButton>
                         </SidebarMenuItem>
 
                         <SidebarMenuItem>
                             <SidebarMenuButton>
-                                <Link href={"/invoice-template"} className="flex w-full">Invoice Template</Link>
+                                <Link href={"/invoice-template"} onClick={handleSidebarToggle} className="flex w-full">Invoice Template</Link>
                             </SidebarMenuButton>
                         </SidebarMenuItem>
 
                         <SidebarMenuItem>
                             <SidebarMenuButton>
-                                <Link href={"/clients"} className="flex w-full">Clients</Link>
+                                <Link href={"/clients"} onClick={handleSidebarToggle} className="flex w-full">Clients</Link>
+                            </SidebarMenuButton>
+                        </SidebarMenuItem>
+
+                        <SidebarMenuItem>
+                            <SidebarMenuButton>
+                                <Link href={"/expenses"} onClick={handleSidebarToggle} className="flex w-full">Expenses</Link>
                             </SidebarMenuButton>
                         </SidebarMenuItem>
 
@@ -53,7 +68,9 @@ export function AppSidebar() {
                 </SidebarGroup>
                 <SidebarGroup />
             </SidebarContent>
-            <SidebarFooter />
+            <SidebarFooter>
+                <LogoutButton />
+            </SidebarFooter>
         </Sidebar>
     )
 }

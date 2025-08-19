@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/table"
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { getBackEndURL } from "@/lib/utils";
+const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:5000";
 
 function TH({ children }) {
     return (

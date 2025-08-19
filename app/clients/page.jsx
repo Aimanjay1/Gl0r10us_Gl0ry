@@ -1,5 +1,3 @@
-import { Toaster } from "@/components/ui/sonner"
-import { AppSidebar } from "@/components/AppSidebar";
 import { Button } from "@/components/ui/button";
 import {
     Table,
@@ -12,7 +10,8 @@ import {
 } from "@/components/ui/table"
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { getBackEndURL } from "@/lib/utils";
+
+const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:5000";
 
 function TH({ children }) {
     return (
@@ -42,7 +41,7 @@ export default async function Clients(props) {
 
     let Clients = [];
     try {
-        const res = await fetch(`${getBackEndURL()}/api/Clients`, {
+        const res = await fetch(`${BACKEND_URL}/api/Clients`, {
             method: "GET",
             cache: 'no-store'
         });
@@ -59,8 +58,9 @@ export default async function Clients(props) {
                 <h1 className="text-5xl font-bold mb-8">Clients</h1>
                 <p>Generate Clients with just a click of a button</p>
             </div>
-            <div className="container mx-auto">
-                <Link className="bg-identity object m-4 p-2 text-background rounded-sm w-fit" href={"clients/new"}>Add New Client</Link>
+
+            <div className="container mx-auto m-4">
+                <Link className="bg-identity object flex p-2 text-background rounded-sm w-fit" href={"clients/new"}>Add New Client</Link>
             </div>
 
 

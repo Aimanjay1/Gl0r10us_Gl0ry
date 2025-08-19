@@ -11,8 +11,6 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
@@ -38,7 +36,7 @@ function Cell({ children }) {
     )
 }
 
-function ClientButton({ children }) {
+function ExpenseButton({ children }) {
     return (
         <Button className={"bg-identity-dillute hover:bg-identity"}>
             {children}
@@ -46,7 +44,7 @@ function ClientButton({ children }) {
     )
 }
 
-export default function AddClient(props) {
+export default function AddExpense(props) {
     const form = useForm({
         defaultValues: {
             profilePicture: null,
@@ -71,19 +69,19 @@ export default function AddClient(props) {
         // console.log(values)
     }
 
-    let Clients = [];
+    let Expenses = [];
     return (
         <main className="flex flex-col h-min-full w-full p-4 lg:p-0 ">
             <div className="container mx-auto my-12">
-                <h1 className="text-5xl font-bold mb-8">Add New Client</h1>
-                <p>Generate Clients with just a click of a button</p>
+                <h1 className="text-5xl font-bold mb-8">Add New Expense</h1>
+                <p>Generate Expenses with just a click of a button</p>
             </div>
 
             <div className="container mx-auto">
                 {/* arrow */}
             </div>
 
-            {/* <Badge variant={"destructive"} className={"mx-auto"}>Failed to load Clients</Badge> */}
+            {/* <Badge variant={"destructive"} className={"mx-auto"}>Failed to load Expenses</Badge> */}
             <div className="container mx-auto">
                 <Form {...form} >
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 max-w-md">
@@ -128,9 +126,9 @@ export default function AddClient(props) {
                                 <FormItem>
                                     <FormLabel>Username</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="Client's name" {...field} value={field.value ?? ""} />
+                                        <Input placeholder="Expense's name" {...field} value={field.value ?? ""} />
                                     </FormControl>
-                                    {/* <FormDescription>The client's name.</FormDescription> */}
+                                    {/* <FormDescription>The Expense's name.</FormDescription> */}
                                     <FormMessage />
                                 </FormItem>
                             )}
@@ -144,7 +142,7 @@ export default function AddClient(props) {
                                     <FormControl>
                                         <Input placeholder="Company Name" {...field} value={field.value ?? ""} />
                                     </FormControl>
-                                    {/* <FormDescription>The client's name.</FormDescription> */}
+                                    {/* <FormDescription>The Expense's name.</FormDescription> */}
                                     <FormMessage />
                                 </FormItem>
                             )}
@@ -158,7 +156,7 @@ export default function AddClient(props) {
                                     <FormControl>
                                         <Input placeholder="Company Address" {...field} value={field.value ?? ""} />
                                     </FormControl>
-                                    {/* <FormDescription>The client's name.</FormDescription> */}
+                                    {/* <FormDescription>The Expense's name.</FormDescription> */}
                                     <FormMessage />
                                 </FormItem>
                             )}
@@ -172,7 +170,7 @@ export default function AddClient(props) {
                                     <FormControl>
                                         <Input placeholder="Company Address" {...field} value={field.value ?? ""} />
                                     </FormControl>
-                                    {/* <FormDescription>The client's name.</FormDescription> */}
+                                    {/* <FormDescription>The Expense's name.</FormDescription> */}
                                     <FormMessage />
                                 </FormItem>
                             )}
@@ -188,8 +186,8 @@ export default function AddClient(props) {
 
 const dummyCustomers = [
     {
-        ClientId: "INV0001",
-        ClientId: "CS0001",
+        ExpenseId: "INV0001",
+        ExpenseId: "CS0001",
         UserId: "US0001",
         Status: "Cancelled",
         OrderDate: "DD/MM/YYYY",
@@ -197,12 +195,12 @@ const dummyCustomers = [
         TotalAmount: 1000,
         CreatedAt: "DD/MM/YYYY HH:MM:SS",
 
-        ClientPdfFileName: "",
+        ExpensePdfFileName: "",
         EmailMessageId: "",
         EmaiThreadId: "",
-        ClientEmailSentAt: "",
+        ExpenseEmailSentAt: "",
 
-        Client: {},
+        Expense: {},
         User: {},
         Items: {},
         Receipts: {}
