@@ -48,15 +48,20 @@ export default async function Invoice(props) {
         cache: "no-store",
     });
 
+    let invoices;
+
     if (!res.ok) {
         if (res.status === 401) {
             // Clear session cookie by calling logout API
-            redirect("/api/auth/logout");
+            // redirect("/api/auth/logout");
         }
-        throw new Error('Failed to load invoices');
+
+        // throw new Error('Failed to load invoices');
+    } else {
+        invoices = await res.json();
     }
 
-    const invoices = await res.json();
+    invoices = invoices || [];
 
     return (
         <main className="flex flex-col h-min-full w-full p-4 lg:p-0 ">
