@@ -43,7 +43,9 @@ export default async function Invoice(props) {
     const cookieStore = await cookies();
     const session = cookieStore.get("session")?.value;
 
-    const res = await fetch("http://localhost:3000/api/invoices", {
+    let error;
+
+    const res = await fetch(`http://localhost:3000/api/invoices?userId=${2}`, {
         headers: {
             Cookie: `session=${session}`,
         },
@@ -57,8 +59,7 @@ export default async function Invoice(props) {
             // Clear session cookie by calling logout API
             // redirect("/api/auth/logout");
         }
-
-        // throw new Error('Failed to load invoices');
+        error = "Failed to load invoices"
     } else {
         invoices = await res.json();
     }
@@ -76,8 +77,12 @@ export default async function Invoice(props) {
             </div>
             {
 
-                invoices.length > 0 ?
+                // invoices.length > 0 ?
+                error ?
                     (<>
+                        {
+                            invoices.length > 0 || <div className="container mx-auto">No invoices has been made</div>
+                        }
                         <Table className={"container mx-auto border-2 border-identity-dillute/20 rounded-xl "}>
                             <TableHeader >
                                 <TableRow className={"bg-accent rounded-xl"}>

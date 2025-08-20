@@ -1,16 +1,15 @@
 import { NextResponse } from "next/server";
 
 const COOKIE_NAME = "session";
-const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:5000";
+const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:5226";
 
 export async function GET(request) {
-    // console.log("😂 api invoices");
+    const body = await request.json(); // Parse JSON body
+    const id = request.nextUrl.searchParams.get("userId");
     const token = request.cookies.get(COOKIE_NAME)?.value;
-    // console.log("session cookie", request.cookies.get(COOKIE_NAME))
-    // console.log("all cookie", request.cookies.getAll());
     if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const res = await fetch(`${BACKEND_URL}/api/invoices`, {
+    const res = await fetch(`${BACKEND_URL}/api/Invoices/${id}`, {
         headers: {
             Authorization: `Bearer ${token}`,
         },

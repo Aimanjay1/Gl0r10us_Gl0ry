@@ -10,13 +10,13 @@ export default function Login() {
   async function handleSubmit(event) {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    const username = formData.get("username");
+    const email = formData.get("email");
     const password = formData.get("password");
 
     const response = await fetch("/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({ email, password }),
     });
 
     if (response.ok) {
@@ -46,7 +46,7 @@ export default function Login() {
               <p>Welcome back!</p>
             </div>
             <div>
-              <Input type="text" name="username" data-slot="input" placeholder="Username or Email" required />
+              <Input type="text" name="email" data-slot="input" placeholder="Username or Email" required />
             </div>
             <div>
               <Input type="password" name="password" data-slot="input" placeholder="Password" required />

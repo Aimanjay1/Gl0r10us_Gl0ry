@@ -10,9 +10,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
-const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:5000";
+const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:5226";
 
 function TH({ children }) {
     return (
@@ -54,26 +52,3 @@ export default async function Invoice(props) {
         </main>
     )
 }
-
-const dummyCustomers = [
-    {
-        InvoiceId: "INV0001",
-        ClientId: "CS0001",
-        UserId: "US0001",
-        Status: "Cancelled",
-        OrderDate: "DD/MM/YYYY",
-        DueDate: "DD/MM/YYYY",
-        TotalAmount: 1000,
-        CreatedAt: "DD/MM/YYYY HH:MM:SS",
-
-        InvoicePdfFileName: "",
-        EmailMessageId: "",
-        EmaiThreadId: "",
-        InvoiceEmailSentAt: "",
-
-        Client: {},
-        User: {},
-        Items: {},
-        Receipts: {}
-    },
-];
