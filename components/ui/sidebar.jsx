@@ -659,13 +659,16 @@ export {
   Sidebar,
   SidebarContent,
   SidebarFooter,
+
   SidebarGroup,
   SidebarGroupAction,
   SidebarGroupContent,
   SidebarGroupLabel,
+
   SidebarHeader,
   SidebarInput,
   SidebarInset,
+
   SidebarMenu,
   SidebarMenuAction,
   SidebarMenuBadge,
@@ -675,6 +678,7 @@ export {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
+
   SidebarProvider,
   SidebarRail,
   SidebarSeparator,

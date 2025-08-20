@@ -1,4 +1,3 @@
-import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
     Table,
@@ -11,7 +10,8 @@ import {
 } from "@/components/ui/table"
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { cookies } from "next/headers";
+
+const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:5000";
 
 function TH({ children }) {
     return (
@@ -29,7 +29,7 @@ function Cell({ children }) {
     )
 }
 
-function InvoiceButton({ children }) {
+function ExpenseButton({ children }) {
     return (
         <Button className={"bg-identity-dillute hover:bg-identity"}>
             {children}
@@ -37,45 +37,36 @@ function InvoiceButton({ children }) {
     )
 }
 
-export default async function Invoice(props) {
-    const cookieStore = cookies();
-    const session = cookieStore.get("session")?.value;
+export default async function Expenses(props) {
 
-    const res = await fetch("http://localhost:3000/api/invoices", {
-        headers: {
-            Cookie: `session=${session}`,
-        },
-        cache: "no-store",
-    });
-
-    let invoices;
-
-    if (!res.ok) {
-        if (res.status === 401) {
-            // Clear session cookie by calling logout API
-            // redirect("/api/auth/logout");
-        }
-
-        // throw new Error('Failed to load invoices');
-    } else {
-        invoices = await res.json();
+    let Expenses = [];
+    try {
+        const res = await fetch(`${BACKEND_URL}/api/Expenses`, {
+            method: "GET",
+            cache: 'no-store'
+        });
+        // if (!res.ok) throw new Error('Failed to load Expenses');
+        if (res.ok)
+            Expenses = await res.json();
+    } catch (e) {
+        console.error("Failed to load Expenses,", e);
+        Expenses = [];
     }
-
-    invoices = invoices || [];
-
     return (
         <main className="flex flex-col h-min-full w-full p-4 lg:p-0 ">
             <div className="container mx-auto my-12">
-                <h1 className="text-5xl font-bold mb-8">Invoices</h1>
-                <p>Generate invoices with just a click of a button</p>
+                <h1 className="text-5xl font-bold mb-8">Expenses</h1>
+                <p>Generate Expenses with just a click of a button</p>
             </div>
 
-            <div className="container mx-auto">
-                <Link className="bg-identity object flex m-4 p-2 text-background rounded-sm w-fit" href={"invoices/new"}>Add New Invoice</Link>
+            <div className="container mx-auto m-4">
+                <Link className="bg-identity object flex p-2 text-background rounded-sm w-fit" href={"expenses/new"}>Add New Expense</Link>
             </div>
+
+
             {
 
-                invoices.length > 0 ?
+                Expenses.length > 0 ?
                     (<>
                         <Table className={"container mx-auto border-2 border-identity-dillute/20 rounded-xl "}>
                             <TableHeader >
@@ -86,38 +77,38 @@ export default async function Invoice(props) {
 
                                     </TH>
                                     <TH>Due Date</TH>
-                                    <TH>Generate Invoice</TH>
+                                    <TH>Generate Expense</TH>
                                     <TH>Send an email</TH>
                                     <TH>Receipt</TH>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {
-                                    invoices.map((invoice, index) => (
+                                    Expenses.map((Expense, index) => (
                                         <TableRow key={index} >
                                             <Cell>
-                                                {invoice.UserId}
+                                                {Expense.UserId}
                                             </Cell>
                                             <Cell>
-                                                {invoice.Status}
+                                                {Expense.Status}
                                             </Cell>
                                             <Cell>
-                                                {invoice.OrderDate}
+                                                {Expense.OrderDate}
                                             </Cell>
                                             <Cell>
-                                                {invoice.DueDate}
+                                                {Expense.DueDate}
                                             </Cell>
                                             <Cell>
-                                                <InvoiceButton>
-                                                    Invoice
-                                                </InvoiceButton>
+                                                <ExpenseButton>
+                                                    Expense
+                                                </ExpenseButton>
                                             </Cell>
                                             <Cell>
-                                                <InvoiceButton>send email</InvoiceButton>
+                                                <ExpenseButton>send email</ExpenseButton>
                                             </Cell>
                                             <Cell>
                                                 <Link
-                                                    href={"/invoices"}>
+                                                    href={"/Expenses"}>
                                                     {""}
                                                     {/* Later to be changed */}
                                                 </Link>
@@ -133,7 +124,7 @@ export default async function Invoice(props) {
                     </>)
                     :
                     (<>
-                        <Badge variant={"destructive"} className={"mx-auto"}>Failed to load invoices</Badge>
+                        <Badge variant={"destructive"} className={"mx-auto"}>Failed to load Expenses</Badge>
                         <Table className={"container mx-auto border-2 border-identity-dillute/20 rounded-xl "}>
                             <TableHeader >
                                 <TableRow className={"bg-accent rounded-xl"}>
@@ -143,7 +134,7 @@ export default async function Invoice(props) {
 
                                     </TH>
                                     <TH>Due Date</TH>
-                                    <TH>Generate Invoice</TH>
+                                    <TH>Generate Expense</TH>
                                     <TH>Send an email</TH>
                                     <TH>Receipt</TH>
                                 </TableRow>
@@ -157,10 +148,10 @@ export default async function Invoice(props) {
     )
 }
 
-const dummyCustomers = [
+const dummyExpenses = [
     {
-        InvoiceId: "INV0001",
-        ClientId: "CS0001",
+        ExpenseId: "INV0001",
+        ExpenseId: "CS0001",
         UserId: "US0001",
         Status: "Cancelled",
         OrderDate: "DD/MM/YYYY",
@@ -168,12 +159,12 @@ const dummyCustomers = [
         TotalAmount: 1000,
         CreatedAt: "DD/MM/YYYY HH:MM:SS",
 
-        InvoicePdfFileName: "",
+        ExpensePdfFileName: "",
         EmailMessageId: "",
         EmaiThreadId: "",
-        InvoiceEmailSentAt: "",
+        ExpenseEmailSentAt: "",
 
-        Client: {},
+        Expense: {},
         User: {},
         Items: {},
         Receipts: {}
