@@ -5,12 +5,20 @@ const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:5226";
 export async function POST(request) {
     const { email, password } = await request.json();
 
-    const res = await fetch(`${BACKEND_URL}/api/auth/register`, {
+    const res = await fetch(`${BACKEND_URL}/api/Auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({
+            fullName: "string",
+            companyName: "string",
+            companyAddress: "string",
+            email: email,
+            contactNumber: "string",
+            logoUrl: "string",
+            password: password
+        }),
     });
-
+    console.log(res)
     if (!res.ok) {
         const error = await res.json();
         return NextResponse.json({ error: error.error || "Registration failed" }, { status: res.status });
