@@ -56,9 +56,9 @@ export default function Login() {
             <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
             <Input type="password" name="password" id="password" placeholder="Password" required className="mt-1 w-full" />
           </div>
-              <Link href="/" className="block w-full">
-                <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 rounded shadow">LOGIN</Button>
-              </Link>
+          {/* <Link href="/" className="block w-full"> */}
+          <Button data-slot="button" className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 rounded shadow" type="submit">LOGIN</Button>
+          {/* </Link> */}
         </form>
       </div>
     </div>
