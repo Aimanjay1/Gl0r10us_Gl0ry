@@ -5262,19 +5262,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\fs561\\.nuget\\packages\\": {}
+    "C:\\Users\\aiman\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\fs561\\code\\TunaiFlow\\TunaiFlow\\Backend\\BizOpsAPI.csproj",
+      "projectUniqueName": "C:\\Users\\aiman\\TunaiFlow\\Backend\\BizOpsAPI.csproj",
       "projectName": "BizOpsAPI",
-      "projectPath": "C:\\Users\\fs561\\code\\TunaiFlow\\TunaiFlow\\Backend\\BizOpsAPI.csproj",
-      "packagesPath": "C:\\Users\\fs561\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\fs561\\code\\TunaiFlow\\TunaiFlow\\Backend\\obj\\",
+      "projectPath": "C:\\Users\\aiman\\TunaiFlow\\Backend\\BizOpsAPI.csproj",
+      "packagesPath": "C:\\Users\\aiman\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\aiman\\TunaiFlow\\Backend\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\fs561\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\aiman\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
@@ -5297,7 +5297,8 @@
         "enableAudit": "true",
         "auditLevel": "low",
         "auditMode": "direct"
-      }
+      },
+      "SdkAnalysisLevel": "9.0.300"
     },
     "frameworks": {
       "net8.0": {
@@ -5391,6 +5392,24 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
+        "downloadDependencies": [
+          {
+            "name": "Microsoft.AspNetCore.App.Ref",
+            "version": "[8.0.19, 8.0.19]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Host.win-x64",
+            "version": "[8.0.19, 8.0.19]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Ref",
+            "version": "[8.0.19, 8.0.19]"
+          },
+          {
+            "name": "Microsoft.WindowsDesktop.App.Ref",
+            "version": "[8.0.19, 8.0.19]"
+          }
+        ],
         "frameworkReferences": {
           "Microsoft.AspNetCore.App": {
             "privateAssets": "none"
@@ -5399,7 +5418,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.413/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
       }
     }
   },
@@ -5408,7 +5427,7 @@
       "code": "NU1603",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "BizOpsAPI depends on Microsoft.Extensions.Configuration.Json (>= 8.0.413) but Microsoft.Extensions.Configuration.Json 8.0.413 was not found. An approximate best match of Microsoft.Extensions.Configuration.Json 9.0.0 was resolved.",
+      "message": "BizOpsAPI depends on Microsoft.Extensions.Configuration.Json (>= 8.0.413) but Microsoft.Extensions.Configuration.Json 8.0.413 was not found. Microsoft.Extensions.Configuration.Json 9.0.0 was resolved instead.",
       "libraryId": "Microsoft.Extensions.Configuration.Json",
       "targetGraphs": [
         "net8.0"
