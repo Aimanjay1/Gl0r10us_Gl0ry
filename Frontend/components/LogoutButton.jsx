@@ -7,7 +7,7 @@ export default function LogoutButton(props) {
 
     const handleLogout = () => {
         // Add your logout logic here
-        router.push('api/auth/logout'); // Example: redirect to login page
+        router.replace('api/auth/logout'); // Example: redirect to login page
     }
 
     return (

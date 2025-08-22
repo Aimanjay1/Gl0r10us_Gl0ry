@@ -10,9 +10,8 @@ import {
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge";
 import { RadioGroupDemo } from "@/components/RadioGroupDemo";
+import { cookies } from "next/headers";
 
-
-const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:5226";
 
 function TH({ children }) {
     return (
@@ -42,19 +41,28 @@ function RevenueButton({ children, className, variant }) {
 }
 
 export default async function Revenues(props) {
-
+    const cookieStore = await cookies();
+    const session = cookieStore.get("session")?.value;
+    let error;
     let Revenues = [];
     try {
-        const res = await fetch(`${BACKEND_URL}/api/revenues`, {
+        const res = await fetch(`${process.env.NEXTJS_URL}/api/revenues`, {
+            headers: {
+                Cookie: `session=${session}`,
+            },
             method: "GET",
             cache: 'no-store'
         });
         // if (!res.ok) throw new Error('Failed to load Revenues');
-        if (res.ok)
+        if (res.ok) {
             Revenues = await res.json();
+            console.log("res.ok Revenues", Revenues)
+        }
+
     } catch (e) {
-        console.error("Failed to load Revenues,", e);
+        console.log("!res.ok Revenues", Revenues)
         Revenues = [];
+        error = "Failed to load Revenues"
     }
     return (
         <main className="flex flex-col h-min-full w-full p-4 lg:p-0 ">
@@ -79,9 +87,12 @@ export default async function Revenues(props) {
 
             <div className="container mx-auto">
                 {
-                    Revenues.length > 0 ?
+                    !error ?
                         (<>
                             <RadioGroupDemo />
+                            {
+                                Revenues.length > 0 || <div className="container mx-auto">No revenue has been made</div>
+                            }
                             <Table className={"max-w-2xl  border-2 border-identity-dillute/20 rounded-xl "}>
                                 <TableHeader >
                                     <TableRow className={"bg-accent rounded-xl"}>
@@ -109,9 +120,7 @@ export default async function Revenues(props) {
 
 
                                 </TableBody>
-
                             </Table>
-
                             <Table className={"w-full mx-auto my-12 gap-2 flex flex-col"}>
                                 <TableBody >
                                     <TableRow  >
@@ -131,19 +140,13 @@ export default async function Revenues(props) {
                         </>)
                         :
                         (<>
-                            <Badge variant={"destructive"} className={"mx-auto"}>Failed to load Revenues</Badge>
+                            <Badge variant={"destructive"} className={"mx-auto"}>{error}</Badge>
                             <Table className={"container mx-auto border-2 border-identity-dillute/20 rounded-xl "}>
                                 <TableHeader >
                                     <TableRow className={"bg-accent rounded-xl"}>
-                                        <TH>Customers</TH>
-                                        <TH>Status</TH>
-                                        <TH>Order Date
-
-                                        </TH>
-                                        <TH>Due Date</TH>
-                                        <TH>Generate Revenue</TH>
-                                        <TH>Send an email</TH>
-                                        <TH>Receipt</TH>
+                                        <TH>Invoice ID</TH>
+                                        <TH>Item</TH>
+                                        <TH>Total Payment</TH>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody></TableBody>

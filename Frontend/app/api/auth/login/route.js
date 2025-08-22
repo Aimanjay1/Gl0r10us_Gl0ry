@@ -1,13 +1,12 @@
 import { NextResponse } from "next/server";
 
-const COOKIE_NAME = "session";
 const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:5226";
 
 export async function POST(request) {
     console.log("working, returning✨✨✨")
     try {
         const { email, password } = await request.json();
-        console.log("✨✨email, password✨✨", email, password)
+        // console.log("✨✨email, password✨✨", email, password)
 
         const res = await fetch(`${BACKEND_URL}/api/Auth/login`, {
             method: "POST",
@@ -29,7 +28,7 @@ export async function POST(request) {
         }
 
         const response = NextResponse.json({ success: true });
-        response.cookies.set(COOKIE_NAME, token, {
+        response.cookies.set(process.env.COOKIE_NAME, token, {
             httpOnly: true,
             path: "/",
             maxAge: 60 * 60 * 24 * 7,

@@ -10,8 +10,7 @@ import {
 } from "@/components/ui/table"
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-
-const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:5226";
+import { cookies } from "next/headers";
 
 function TH({ children }) {
     return (
@@ -40,19 +39,25 @@ function ExpenseButton({ children, className, variant }) {
 }
 
 export default async function Expenses(props) {
+    const cookieStore = await cookies();
+    const session = cookieStore.get("session")?.value;
 
+    let error = null;
     let Expenses = [];
     try {
-        const res = await fetch(`${BACKEND_URL}/api/expenses`, {
+        const res = await fetch(`${process.env.NEXTJS_URL}/api/expenses`, {
+            headers: {
+                Cookie: `session=${session}`,
+            },
             method: "GET",
             cache: 'no-store'
         });
-        // if (!res.ok) throw new Error('Failed to load Expenses');
-        if (res.ok)
-            Expenses = await res.json();
+        if (!res.ok) throw new Error('Failed to load Expenses');
+        Expenses = await res.json();
     } catch (e) {
-        console.error("Failed to load Expenses,", e);
+        // console.error("Failed to load Expenses,", e);
         Expenses = [];
+        error = "Failed to load Expenses"
     }
     return (
         <main className="flex flex-col h-min-full w-full p-4 lg:p-0 ">
@@ -68,7 +73,7 @@ export default async function Expenses(props) {
 
             {
 
-                Expenses.length > 0 ?
+                !error ?
                     (<>
                         <Table className={"container mx-auto border-2 border-identity-dillute/20 rounded-xl "}>
                             <TableHeader >
@@ -118,7 +123,7 @@ export default async function Expenses(props) {
                     </>)
                     :
                     (<>
-                        <Badge variant={"destructive"} className={"mx-auto"}>Failed to load Expenses</Badge>
+                        <Badge variant={"destructive"} className={"mx-auto"}>{error}</Badge>
                         <Table className={"container mx-auto border-2 border-identity-dillute/20 rounded-xl "}>
                             <TableHeader >
                                 <TableRow className={"bg-accent rounded-xl"}>
@@ -141,26 +146,3 @@ export default async function Expenses(props) {
         </main>
     )
 }
-
-const dummyExpenses = [
-    {
-        ExpenseId: "INV0001",
-        ExpenseId: "CS0001",
-        UserId: "US0001",
-        Status: "Cancelled",
-        OrderDate: "DD/MM/YYYY",
-        DueDate: "DD/MM/YYYY",
-        TotalAmount: 1000,
-        CreatedAt: "DD/MM/YYYY HH:MM:SS",
-
-        ExpensePdfFileName: "",
-        EmailMessageId: "",
-        EmaiThreadId: "",
-        ExpenseEmailSentAt: "",
-
-        Expense: {},
-        User: {},
-        Items: {},
-        Receipts: {}
-    },
-];

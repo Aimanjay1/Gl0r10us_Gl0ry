@@ -1,6 +1,4 @@
 "use client"
-import { Toaster } from "@/components/ui/sonner"
-import { AppSidebar } from "@/components/AppSidebar";
 import { Button } from "@/components/ui/button";
 import {
     Table,
@@ -11,15 +9,13 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useEffect, useState } from "react";
+import { useToast } from "@/components/Toasts";
 
-const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:5226";
 
 
 function TH({ children }) {
@@ -47,13 +43,19 @@ function ClientButton({ children }) {
 }
 
 export default function AddClient(props) {
+    const { open } = useToast();
+
     const form = useForm({
         defaultValues: {
-            profilePicture: null,
-            username: "",
+            clientName: "",
             companyName: "",
             companyAddress: "",
-            address: "",
+            email: "",
+            contactNumber: "",
+
+            // idk abt these two
+            // address: "",
+            // profilePicture: null,
         },
         mode: "onSubmit",
     })
@@ -66,9 +68,27 @@ export default function AddClient(props) {
         }
     }, [preview])
 
-    function onSubmit(values) {
-        // handle submit (e.g., send to API)
-        // console.log(values)
+    async function onSubmit(values) {
+        console.log("values", values)
+
+        try {
+            const res = await fetch(`/api/clients`, {
+                method: "POST",
+                body: JSON.stringify(values),
+                // headers: { Cookie: `session=${session}` }, // Add session if needed
+            });
+
+            if (res.ok) {
+                // handle success
+                console.log(await res.json());
+                open("Client created successfully!", 4000)
+            } else {
+                console.error("❌❌❌ Failed to create client");
+                open("Failed to create client!", 4000)
+            }
+        } catch (e) {
+            console.error("Failed to load Clients,", e);
+        }
     }
 
     let Clients = [];
@@ -87,7 +107,7 @@ export default function AddClient(props) {
             <div className="container mx-auto">
                 <Form {...form} >
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 max-w-md">
-                        <FormField
+                        {/* <FormField
                             control={form.control}
                             name="profilePicture"
                             render={({ field }) => (
@@ -120,10 +140,10 @@ export default function AddClient(props) {
                                     </div>
                                 </FormItem>
                             )}
-                        />
+                        /> */}
                         <FormField
                             control={form.control}
-                            name="username"
+                            name="clientName"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Username</FormLabel>
@@ -163,7 +183,7 @@ export default function AddClient(props) {
                                 </FormItem>
                             )}
                         />
-                        <FormField
+                        {/* <FormField
                             control={form.control}
                             name="address"
                             render={({ field }) => (
@@ -171,6 +191,19 @@ export default function AddClient(props) {
                                     <FormLabel>Company Email</FormLabel>
                                     <FormControl>
                                         <Input placeholder="Company Address" {...field} value={field.value ?? ""} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        /> */}
+                        <FormField
+                            control={form.control}
+                            name="email"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Email</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="Email" {...field} value={field.value ?? ""} />
                                     </FormControl>
                                     {/* <FormDescription>The client's name.</FormDescription> */}
                                     <FormMessage />
@@ -182,7 +215,7 @@ export default function AddClient(props) {
                 </Form>
             </div>
 
-        </main>
+        </main >
     )
 }
 

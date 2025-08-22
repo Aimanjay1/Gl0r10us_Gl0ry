@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/table"
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import { cookies } from "next/headers";
 
 const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:5226";
 
@@ -31,34 +32,44 @@ function Cell({ children }) {
 
 
 export default async function Clients(props) {
+    const cookieStore = await cookies();
+    const session = cookieStore.get("session")?.value;
+
+    let error;
+
 
     let Clients = [];
     try {
-        const res = await fetch(`${BACKEND_URL}/api/clients`, {
-            method: "GET",
-            cache: 'no-store'
+        const res = await fetch(`${process.env.NEXTJS_URL}/api/clients`, {
+            headers: {
+                Cookie: `session=${session}`,
+            },
+            cache: "no-store",
         });
         // if (!res.ok) throw new Error('Failed to load Clients');
         if (res.ok)
             Clients = await res.json();
+        else
+            error = "Failed to load clients"
     } catch (e) {
         // console.error("Failed to load Clients,", e);
         Clients = [];
     }
     return (
-        <main className="flex flex-col h-min-full w-full p-4 lg:p-0 ">
+        <main className="flex flex-col h-min-full container mx-auto p-4">
             <div className="container mx-auto my-12">
                 <h1 className="text-5xl font-bold mb-8">Clients</h1>
-                <p>Generate Clients with just a click of a button</p>
             </div>
-
             <div className="container mx-auto m-4">
                 <Link className="bg-identity object flex p-2 text-background rounded-sm w-fit" href={"clients/new"}>Add New Client</Link>
             </div>
 
             {
-                Clients.length > 0 ?
+                !error ?
                     (<>
+                        {
+                            Clients.length > 0 || <div className="container mx-auto">No clients has been made</div>
+                        }
                         <Table className={"container mx-auto border-2 border-identity-dillute/20 rounded-xl "}>
                             <TableHeader >
                                 <TableRow className={"bg-accent rounded-xl"}>
@@ -74,20 +85,20 @@ export default async function Clients(props) {
                                     Clients.map((Client, index) => (
                                         <TableRow key={index} >
                                             <Cell>
-                                                <h1 className="font-bold">{Client.ClientName}</h1>
-                                                <p className="">{Client.ClientId}</p>
+                                                <h1 className="font-bold">{Client.clientName}</h1>
+                                                <p className="">{Client.clientId}</p>
                                             </Cell>
                                             <Cell>
-                                                {Client.ContactNumber}
+                                                010tekan2xdpt
                                             </Cell>
                                             <Cell>
-                                                {Client.CompanyName}
+                                                {Client.companyName}
                                             </Cell>
                                             <Cell>
                                                 {Client.CompanyAddress}
                                             </Cell>
                                             <Cell>
-                                                {Client.Email}
+                                                {Client.email}
                                             </Cell>
                                         </TableRow>
                                     ))
@@ -100,7 +111,7 @@ export default async function Clients(props) {
                     </>)
                     :
                     (<>
-                        <Badge variant={"destructive"} className={"mx-auto"}>Failed to load Clients</Badge>
+                        <Badge variant={"destructive"} className={"mx-auto"}>{error}</Badge>
                         <Table className={"container mx-auto border-2 border-identity-dillute/20 rounded-xl "}>
                             <TableHeader >
                                 <TableRow className={"bg-accent rounded-xl"}>
@@ -126,23 +137,9 @@ export default async function Clients(props) {
 
 const dummyCustomers = [
     {
-        ClientId: "INV0001",
-        ClientId: "CS0001",
-        UserId: "US0001",
-        Status: "Cancelled",
-        OrderDate: "DD/MM/YYYY",
-        DueDate: "DD/MM/YYYY",
-        TotalAmount: 1000,
-        CreatedAt: "DD/MM/YYYY HH:MM:SS",
-
-        ClientPdfFileName: "",
-        EmailMessageId: "",
-        EmaiThreadId: "",
-        ClientEmailSentAt: "",
-
-        Client: {},
-        User: {},
-        Items: {},
-        Receipts: {}
-    },
-];
+        "": 2,
+        "": 4,
+        "": "bruh",
+        "": "bruh",
+        "": "bruh@gmail.com"
+    },];

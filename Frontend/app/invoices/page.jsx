@@ -45,7 +45,7 @@ export default async function Invoice(props) {
 
     let error;
 
-    const res = await fetch(`http://localhost:3000/api/invoices?userId=${2}`, {
+    const res = await fetch(`${process.env.NEXTJS_URL}/api/invoices?userId=${2}`, {
         headers: {
             Cookie: `session=${session}`,
         },
@@ -77,8 +77,7 @@ export default async function Invoice(props) {
             </div>
             {
 
-                // invoices.length > 0 ?
-                error ?
+                !error ?
                     (<>
                         {
                             invoices.length > 0 || <div className="container mx-auto">No invoices has been made</div>
@@ -141,7 +140,7 @@ export default async function Invoice(props) {
                     </>)
                     :
                     (<>
-                        <Badge variant={"destructive"} className={"mx-auto"}>Failed to load invoices</Badge>
+                        <Badge variant={"destructive"} className={"mx-auto"}>{error}</Badge>
                         <Table className={"container mx-auto border-2 border-identity-dillute/20 rounded-xl "}>
                             <TableHeader >
                                 <TableRow className={"bg-accent rounded-xl"}>
