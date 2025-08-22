@@ -1,6 +1,0 @@
-@BizOpsAPI_HostAddress = http://localhost:5226
-
-GET {{BizOpsAPI_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

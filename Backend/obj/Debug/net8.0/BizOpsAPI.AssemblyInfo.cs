@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BizOpsAPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3b4b99cb736c2908e3ed21de81618158460e71d8")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f747ca4f094771d1e4d993b6edf15ebf0c6ec743")]
 [assembly: System.Reflection.AssemblyProductAttribute("BizOpsAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BizOpsAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
