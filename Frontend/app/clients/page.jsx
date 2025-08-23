@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { PageLayout, PageButton, TH, Cell } from "@/components/PageCommon";
 import {
     Table,
     TableBody,
@@ -11,25 +11,9 @@ import {
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { cookies } from "next/headers";
+import { useUser } from "@/components/UserProvider";
 
 const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:5226";
-
-function TH({ children }) {
-    return (
-        <TableHead className={"text-center"}>
-            {children}
-        </TableHead>
-    )
-}
-
-function Cell({ children }) {
-    return (
-        <TableCell className={"text-center"}>
-            {children}
-        </TableCell>
-    )
-}
-
 
 export default async function Clients(props) {
     const cookieStore = await cookies();
@@ -56,13 +40,8 @@ export default async function Clients(props) {
         Clients = [];
     }
     return (
-        <main className="flex flex-col h-min-full container mx-auto p-4">
-            <div className="container mx-auto my-12">
-                <h1 className="text-5xl font-bold mb-8">Clients</h1>
-            </div>
-            <div className="container mx-auto m-4">
-                <Link className="bg-identity object flex p-2 text-background rounded-sm w-fit" href={"clients/new"}>Add New Client</Link>
-            </div>
+        <PageLayout title="Clients">
+            <PageButton href="clients/new">Add New Client</PageButton>
 
             {
                 !error ?
@@ -71,6 +50,7 @@ export default async function Clients(props) {
                             Clients.length > 0 || <div className="container mx-auto">No clients has been made</div>
                         }
                         <Table className={"container mx-auto border-2 border-identity-dillute/20 rounded-xl "}>
+                            <colgroup><col className="w-32" /><col className="w-32" /><col className="w-28" /><col className="w-20" /><col className="w-28" /></colgroup>
                             <TableHeader >
                                 <TableRow className={"bg-accent rounded-xl"}>
                                     <TH>Customer</TH>
@@ -85,8 +65,10 @@ export default async function Clients(props) {
                                     Clients.map((Client, index) => (
                                         <TableRow key={index} >
                                             <Cell>
-                                                <h1 className="font-bold">{Client.clientName}</h1>
-                                                <p className="">{Client.clientId}</p>
+                                                <div className="flex flex-col max-w-[200px] mx-auto justify-center">
+                                                    <h1 className="font-bold w-full text-ellipsis overflow-hidden">{Client.clientName}</h1>
+                                                    <p className="">{Client.clientId}</p>
+                                                </div>
                                             </Cell>
                                             <Cell>
                                                 010tekan2xdpt
@@ -131,7 +113,7 @@ export default async function Clients(props) {
                     </>)
             }
 
-        </main>
+        </PageLayout>
     )
 }
 

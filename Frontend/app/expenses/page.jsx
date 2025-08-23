@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { PageLayout, PageButton, TH, Cell } from "@/components/PageCommon";
 import {
     Table,
     TableBody,
@@ -11,22 +11,6 @@ import {
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { cookies } from "next/headers";
-
-function TH({ children }) {
-    return (
-        <TableHead className={"text-center"}>
-            {children}
-        </TableHead>
-    )
-}
-
-function Cell({ children }) {
-    return (
-        <TableCell className={"text-center"}>
-            {children}
-        </TableCell>
-    )
-}
 
 function ExpenseButton({ children, className, variant }) {
     variant = (variant ? "bg-" + variant : "bg-identity-dillute hover:bg-identity")
@@ -60,17 +44,8 @@ export default async function Expenses(props) {
         error = "Failed to load Expenses"
     }
     return (
-        <main className="flex flex-col h-min-full w-full p-4 lg:p-0 ">
-            <div className="container mx-auto my-12">
-                <h1 className="text-5xl font-bold mb-8">Expenses</h1>
-                <p>Generate Expenses with just a click of a button</p>
-            </div>
-
-            <div className="container mx-auto m-4">
-                <Link className="bg-identity object flex p-2 text-background rounded-sm w-fit" href={"expenses/new"}>Add New Expense</Link>
-            </div>
-
-
+        <PageLayout title="Expenses" subtitle="Generate Expenses with just a click of a button">
+            <PageButton href="expenses/new">Add New Expense</PageButton>
             {
 
                 !error ?
@@ -143,6 +118,6 @@ export default async function Expenses(props) {
                     </>)
             }
 
-        </main>
+        </PageLayout>
     )
 }

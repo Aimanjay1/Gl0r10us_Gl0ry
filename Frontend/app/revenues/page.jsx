@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { PageLayout, PageButton, TH, Cell } from "@/components/PageCommon";
 import {
     Table,
     TableBody,
@@ -12,22 +12,6 @@ import { Badge } from "@/components/ui/badge";
 import { RadioGroupDemo } from "@/components/RadioGroupDemo";
 import { cookies } from "next/headers";
 
-
-function TH({ children }) {
-    return (
-        <TableHead className={"text-center"}>
-            {children}
-        </TableHead>
-    )
-}
-
-function Cell({ children }) {
-    return (
-        <TableCell className={"text-center"}>
-            {children}
-        </TableCell>
-    )
-}
 
 function RevenueButton({ children, className, variant }) {
     variant = (variant ? "bg-" + variant : "bg-identity-dillute hover:bg-identity")
@@ -65,26 +49,8 @@ export default async function Revenues(props) {
         error = "Failed to load Revenues"
     }
     return (
-        <main className="flex flex-col h-min-full w-full p-4 lg:p-0 ">
-            <div className="container mx-auto my-12">
-                <h1 className="text-5xl font-bold mb-8">Revenues</h1>
-                <p>Generate Revenues with just a click of a button</p>
-            </div>
-
-            <div className="container mx-auto m-4">
-                {/* <RadioGroup defaultValue="option-one" className="flex">
-                    <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="option-one" id="option-one" />
-                        <Label htmlFor="option-one">Option One</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="option-two" id="option-two" />
-                        <Label htmlFor="option-two">Option Two</Label>
-                    </div>
-                </RadioGroup> */}
-                {/* <Link className="bg-identity object flex p-2 text-background rounded-sm w-fit" href={"Revenues/new"}>Add New Revenue</Link> */}
-            </div>
-
+        <PageLayout title="Revenues" subtitle="Generate Revenues with just a click of a button">
+            <PageButton href="revenues/new">Add New Revenue</PageButton>
             <div className="container mx-auto">
                 {
                     !error ?
@@ -154,7 +120,6 @@ export default async function Revenues(props) {
                         </>)
                 }
             </div>
-
-        </main>
+        </PageLayout>
     )
 }

@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { PageLayout, PageButton, TH, Cell } from "@/components/PageCommon";
 import {
     Table,
     TableBody,
@@ -11,41 +11,23 @@ import {
 } from "@/components/ui/table"
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
 
-function TH({ children }) {
-    return (
-        <TableHead className={"text-center"}>
-            {children}
-        </TableHead>
-    )
-}
-
-function Cell({ children }) {
-    return (
-        <TableCell className={"text-center"}>
-            {children}
-        </TableCell>
-    )
-}
-
-function InvoiceButton({ children, className, variant }) {
-    variant = (variant ? "bg-" + variant : "bg-identity-dillute hover:bg-identity")
-    className = variant + " " + (className || "")
-    return (
-        <Button className={className} >
-            {children}
-        </Button >
-    )
-}
-
 export default async function Invoice(props) {
-    const cookieStore = await cookies();
+    const cookieStore = cookies();
     const session = cookieStore.get("session")?.value;
+
+    let userId;
+    if (session) {
+        // Replace "your_jwt_secret" with your actual secret if you want to verify
+        const payload = jwt.decode(session); // Only decodes, does not verify
+        userId = payload?.sub || payload?.userId; // Adjust based on your JWT structure
+    }
 
     let error;
 
-    const res = await fetch(`${process.env.NEXTJS_URL}/api/invoices?userId=${2}`, {
+    const res = await fetch(`${process.env.NEXTJS_URL}/api/invoices?userId=${userId}`, {
         headers: {
             Cookie: `session=${session}`,
         },
@@ -62,19 +44,14 @@ export default async function Invoice(props) {
         error = "Failed to load invoices"
     } else {
         invoices = await res.json();
+        console.log(invoices)
     }
 
     invoices = invoices || [];
 
     return (
-        <main className="flex flex-col h-min-full w-full p-4 lg:p-0 ">
-            <div className="container mx-auto my-12">
-                <h1 className="text-5xl font-bold mb-8">Invoices</h1>
-                <p>Generate invoices with just a click of a button</p>
-            </div>
-            <div className="container mx-auto m-4">
-                <Link className="bg-identity object flex p-2 text-background rounded-sm w-fit" href={"invoices/new"}>Add New Invoice</Link>
-            </div>
+        <PageLayout title="Invoices" subtitle="Generate invoices with just a click of a button">
+            <PageButton href="invoices/new">Add New Invoice</PageButton>
             {
 
                 !error ?
@@ -85,7 +62,7 @@ export default async function Invoice(props) {
                         <Table className={"container mx-auto border-2 border-identity-dillute/20 rounded-xl "}>
                             <TableHeader >
                                 <TableRow className={"bg-accent rounded-xl"}>
-                                    <TH>Customers</TH>
+                                    <TH>Client ID</TH>
                                     <TH>Status</TH>
                                     <TH>Order Date
 
@@ -101,26 +78,26 @@ export default async function Invoice(props) {
                                     invoices.map((invoice, index) => (
                                         <TableRow key={index} >
                                             <Cell>
-                                                {invoice.UserId}
+                                                {invoice.clientId}
                                             </Cell>
                                             <Cell>
-                                                {invoice.Status}
+                                                {invoice.status}
                                             </Cell>
                                             <Cell>
-                                                {invoice.OrderDate}
+                                                {invoice.orderDate}
                                             </Cell>
                                             <Cell>
-                                                {invoice.DueDate}
+                                                {invoice.dueDate}
                                             </Cell>
                                             <Cell>
                                                 {/* <InvoiceButton> */}
-                                                <Link href={`/invoices/${invoice.InvoiceId}`} className="bg-identity-dillute text-background rounded-md p-2">
+                                                {/* <Link href={`/invoices/${invoice.InvoiceId}`} className="bg-identity-dillute text-background rounded-md p-2">
                                                     {invoice.InvoicePdfFileName}
-                                                </Link>
+                                                </Link> */}
                                                 {/* </InvoiceButton> */}
                                             </Cell>
                                             <Cell>
-                                                <InvoiceButton>send email</InvoiceButton>
+                                                <PageButton>send email</PageButton>
                                             </Cell>
                                             <Cell>
                                                 {/* <Link
@@ -160,7 +137,7 @@ export default async function Invoice(props) {
                     </>)
             }
 
-        </main >
+        </PageLayout>
     )
 }
 

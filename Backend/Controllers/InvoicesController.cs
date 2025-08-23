@@ -21,8 +21,40 @@ namespace BizOpsAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateInvoiceDto dto)
         {
-            var invoice = await _svc.CreateInvoiceAsync(dto);
-            return CreatedAtAction(nameof(GetById), new { id = invoice.InvoiceId }, invoice);
+            try
+            {
+                dto.ClientId = Convert.ToInt32(dto.ClientId);
+                dto.UserId = Convert.ToInt32(dto.UserId);
+
+                // Convert dates to UTC
+                if (dto.OrderDate.Kind == DateTimeKind.Unspecified)
+                    dto.OrderDate = DateTime.SpecifyKind(dto.OrderDate, DateTimeKind.Utc);
+                else
+                    dto.OrderDate = dto.OrderDate.ToUniversalTime();
+
+                if (dto.DueDate.Kind == DateTimeKind.Unspecified)
+                    dto.DueDate = DateTime.SpecifyKind(dto.DueDate, DateTimeKind.Utc);
+                else
+                    dto.DueDate = dto.DueDate.ToUniversalTime();
+
+                if (dto.Items != null)
+                {
+                    foreach (var item in dto.Items)
+                    {
+                        item.Quantity = Convert.ToInt32(item.Quantity);
+                        item.UnitPrice = Convert.ToDecimal(item.UnitPrice);
+                        item.ItemName = item.ItemName?.ToString();
+                    }
+                }
+
+                var invoice = await _svc.CreateInvoiceAsync(dto);
+                return CreatedAtAction(nameof(GetById), new { id = invoice.InvoiceId }, invoice);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error creating invoice: " + ex.ToString());
+                return Problem(detail: ex.Message, statusCode: 500);
+            }
         }
 
         [HttpGet("user/{userId}")]
