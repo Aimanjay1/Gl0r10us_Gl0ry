@@ -15,16 +15,9 @@ export function UserProvider({ children, initialUser = null }) {
         setLoading(true);
         setError(null);
         try {
-            const res = await fetch("/api/auth/me", {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json"
-                },
-                credentials: "include"
-            });
+            const res = await fetch("/api/auth/me", { credentials: "include" });
             if (res.ok) {
                 const data = await res.json();
-                console.log("setUser", data)
                 setUser(data);
             } else {
                 setUser(null);
@@ -38,9 +31,8 @@ export function UserProvider({ children, initialUser = null }) {
     }, []);
 
     useEffect(() => {
-        // if (!initialUser) 
-        fetchMe();
-    }, []);
+        if (!initialUser) fetchMe();
+    }, [initialUser, fetchMe]);
 
     // Login helper
     const login = useCallback(
@@ -55,17 +47,14 @@ export function UserProvider({ children, initialUser = null }) {
                     credentials: "include",
                 });
                 if (res.ok) {
-                    console.log("fetchMe()", res.ok)
                     await fetchMe();
                     return true;
                 } else {
-                    console.log("failed to login", res.ok)
                     setError("Login failed");
                     return false;
                 }
             } catch (e) {
                 setError(e);
-                console.log("error,", e)
                 return false;
             } finally {
                 setLoading(false);
