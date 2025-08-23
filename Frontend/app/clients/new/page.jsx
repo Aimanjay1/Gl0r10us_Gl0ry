@@ -218,26 +218,3 @@ export default function AddClient(props) {
         </main >
     )
 }
-
-const dummyCustomers = [
-    {
-        ClientId: "INV0001",
-        ClientId: "CS0001",
-        UserId: "US0001",
-        Status: "Cancelled",
-        OrderDate: "DD/MM/YYYY",
-        DueDate: "DD/MM/YYYY",
-        TotalAmount: 1000,
-        CreatedAt: "DD/MM/YYYY HH:MM:SS",
-
-        ClientPdfFileName: "",
-        EmailMessageId: "",
-        EmaiThreadId: "",
-        ClientEmailSentAt: "",
-
-        Client: {},
-        User: {},
-        Items: {},
-        Receipts: {}
-    },
-];

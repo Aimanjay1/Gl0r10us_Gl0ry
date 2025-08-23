@@ -4,16 +4,19 @@ const AUTH_PREFIX = "/auth";
 
 export function middleware(request) {
     const token = request.cookies.get(COOKIE_NAME)?.value;
-    const isLoggedIn = Boolean(token);
     const { pathname } = request.nextUrl;
 
     if (pathname.startsWith("/_next") || pathname === "/favicon.ico") return NextResponse.next();
 
     if (pathname.startsWith(AUTH_PREFIX)) {
-        return isLoggedIn ? NextResponse.redirect(new URL("/", request.url)) : NextResponse.next();
+        return token ? NextResponse.redirect(new URL("/", request.url)) : NextResponse.next();
     }
 
-    if (!isLoggedIn) return NextResponse.redirect(new URL("/auth/login", request.url));
+    if (!token) {
+        console.log("No token!")
+        return NextResponse.redirect(new URL("/auth/login", request.url));
+    }
+    console.log("Yes token!")
     return NextResponse.next();
 }
 export const config = {

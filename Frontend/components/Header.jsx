@@ -1,8 +1,13 @@
+"use client"
 import { Avatar } from "@/components/ui/avatar";
 import Link from "next/link";
 import { SidebarTrigger } from "./ui/sidebar";
+import { useUser } from "./UserProvider";
 
 export default function Header(props) {
+    const { user, refresh } = useUser()
+    console.log("user,", user)
+
     return (
         <div className="flex w-full bg-accent py-4 items-center justify-between ">
             <div className="flex gap-4 px-2 ">
@@ -16,11 +21,10 @@ export default function Header(props) {
             <div className=" pr-4 flex items-center gap-2" >
                 <Avatar className={"bg-primary h-6 w-6 lg:h-8 lg:w-8"} src={null} />
                 <div className="text-sm flex flex-col justify-center">
-                    <p className="font-bold ">username</p>
-                    <p className="text-ellipsis">username@email.com</p>
+                    <p className="font-bold ">{user}</p>
+                    <p className="text-ellipsis">{user ? (user.email || "Shit") : "Shit"}</p>
                 </div>
             </div>
-
         </div>
     )
 }

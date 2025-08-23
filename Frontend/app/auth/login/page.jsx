@@ -3,27 +3,31 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/components/Toasts";
+import { useUser } from "@/components/UserProvider";
 
 
 export default function Login() {
+  const { open } = useToast();
   const router = useRouter();
+  const { login } = useUser();
 
   async function handleSubmit(event) {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const email = formData.get("email");
     const password = formData.get("password");
-
-    const response = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
-
-    if (response.ok) {
+    // const response = await fetch("/api/auth/login", {
+    //   method: "POST",
+    //   headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify({ email, password }),
+    // });
+    const bruh = await login(email, password)
+    if (bruh) {
+      open("Login successful.", 3000);
       router.replace("/");
     } else {
-      alert("Login failed. Please check your credentials.");
+      open("Login failed. Please check your credentials.", 3000, "#ff0000");
     }
   }
 

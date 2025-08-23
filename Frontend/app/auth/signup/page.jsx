@@ -13,6 +13,7 @@ export default function Signup() {
     event.preventDefault();
 
     const formData = new FormData(event.currentTarget);
+    const fullName = formData.get("fullName");
     const email = formData.get("email");
     const password = formData.get("password");
     const confirmPassword = formData.get("confirmPassword");
@@ -25,7 +26,7 @@ export default function Signup() {
     const response = await fetch("/api/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ fullName, email, password }),
     });
 
     if (response.ok) {
@@ -57,6 +58,10 @@ export default function Signup() {
         </div>
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">Full Name</label>
+            <Input type="fullName" name="fullName" id="fullName" placeholder="Full Name" required className="mt-1 w-full" />
+          </div>
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
             <Input type="email" name="email" id="email" placeholder="Email" required className="mt-1 w-full" />

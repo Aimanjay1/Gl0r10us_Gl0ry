@@ -3,13 +3,13 @@ import { NextResponse } from "next/server";
 const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:5226";
 
 export async function POST(request) {
-    const { email, password } = await request.json();
+    const { fullName, email, password } = await request.json();
 
     const res = await fetch(`${BACKEND_URL}/api/Auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-            fullName: "string",
+            fullName: fullName,
             companyName: "string",
             companyAddress: "string",
             email: email,
