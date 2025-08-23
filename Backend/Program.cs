@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Http.Features;
 using Supabase;
+using QuestPDF.Infrastructure; // ✅ NEW
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -97,7 +98,7 @@ builder.Services.AddScoped<IRevenueRepository, RevenueRepository>();
 // ===== Services =====
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IClientService, ClientService>();
-builder.Services.AddScoped<IInvoiceService, InvoiceService>();
+builder.Services.AddScoped<IInvoiceService, InvoiceService>();   
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IExpenseService, ExpenseService>();
 builder.Services.AddScoped<IReceiptService, ReceiptService>();
@@ -132,9 +133,9 @@ builder.Services.AddScoped<ICurrentUser, CurrentUser>();
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 
-// ===== Email ingestion background service =====
+// ===== Email ingestion (trigger-on-click) =====
 builder.Services.Configure<EmailIngestionSettings>(builder.Configuration.GetSection("EmailIngestion"));
-builder.Services.AddHostedService<EmailReceiptIngestionService>();
+builder.Services.AddScoped<IEmailReceiptIngestionJob, EmailReceiptIngestionJob>();   
 
 // (Optional) allow larger multipart uploads (e.g., 25 MB receipts)
 builder.Services.Configure<FormOptions>(o =>
@@ -186,6 +187,9 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+// ✅ QuestPDF: set license mode once on startup
+QuestPDF.Settings.License = LicenseType.Community;
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -203,48 +207,12 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// Lightweight DB health check
-app.MapGet("/health/db", async (AppDbContext db, CancellationToken ct) =>
+app.MapGet("/api/invoices/{id:int}/pdf", async (int id, IInvoiceService svc) =>
 {
-    try
-    {
-        await db.Database.ExecuteSqlRawAsync("select 1", ct);
-        return Results.Ok("ok");
-    }
-    catch (Exception ex)
-    {
-        return Results.Problem(ex.Message);
-    }
+    var pdf = await svc.GenerateInvoicePdfAsync(id);
+    var fileName = $"invoice_{id}.pdf";
+    return Results.File(pdf, "application/pdf", fileName);
 });
-
-app.MapPost("/health/storage", async (
-    Supabase.Client supabase,
-    Microsoft.Extensions.Options.IOptions<SupabaseSettings> cfg) =>
-{
-    var settings = cfg.Value;
-    var bucket = settings.Storage.Bucket;
-    var objectPath = $"health/{Guid.NewGuid():N}.txt";
-    var bytes = System.Text.Encoding.UTF8.GetBytes("ok");
-
-    // Upload
-    await supabase.Storage
-        .From(bucket)
-        .Upload(bytes, objectPath,
-            new Supabase.Storage.FileOptions { ContentType = "text/plain", Upsert = false });
-
-    // URL (public or signed)
-    string url;
-    if (settings.Storage.PublicBucket)
-        url = supabase.Storage.From(bucket).GetPublicUrl(objectPath) ?? "";
-    else
-        url = await supabase.Storage.From(bucket).CreateSignedUrl(objectPath, settings.Storage.SignedUrlTtlSeconds) ?? "";
-
-    // Clean up
-    await supabase.Storage.From(bucket).Remove(new List<string> { objectPath });
-
-    return Results.Ok(new { bucket, objectPath, url_ok = !string.IsNullOrWhiteSpace(url) });
-});
-
 
 // Apply EF migrations at startup
 using (var scope = app.Services.CreateScope())
@@ -252,5 +220,7 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.Migrate();
 }
+
+app.MapGet("/healthz", () => "ok"); // Render healthcheck
 
 app.Run();

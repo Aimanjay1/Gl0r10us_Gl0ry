@@ -10,11 +10,19 @@ namespace BizOpsAPI.Controllers
     {
         private readonly IReceiptService _receiptService;
         private readonly ReceiptLinkService _links;
+        private readonly IEmailReceiptIngestionJob _ingestionJob;
 
-        public ReceiptsController(IReceiptService receiptService, ReceiptLinkService links)
+        // simple in-memory guard to prevent overlapping runs from rapid clicks
+        private static int _ingestionRunning = 0;
+
+        public ReceiptsController(
+            IReceiptService receiptService,
+            ReceiptLinkService links,
+            IEmailReceiptIngestionJob ingestionJob)
         {
             _receiptService = receiptService;
             _links = links;
+            _ingestionJob = ingestionJob;
         }
 
         [HttpGet]
@@ -35,7 +43,7 @@ namespace BizOpsAPI.Controllers
             return Ok(receipt);
         }
 
-        // GET /api/Receipts/by-invoice/3
+        // GET /api/receipts/by-invoice/3
         [HttpGet("by-invoice/{invoiceId:int}")]
         public async Task<IActionResult> GetByInvoice(int invoiceId, CancellationToken ct)
         {
@@ -51,7 +59,6 @@ namespace BizOpsAPI.Controllers
         public async Task<IActionResult> Create([FromForm] ReceiptCreateDto dto, CancellationToken ct)
         {
             var created = await _receiptService.CreateAsync(dto, ct);
-            // Convert stored path to downloadable URL before returning
             created.ReceiptUrl = await _links.ToDownloadUrlAsync(created.ReceiptUrl, ct: ct);
             return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
@@ -71,6 +78,34 @@ namespace BizOpsAPI.Controllers
         {
             var ok = await _receiptService.DeleteAsync(id);
             return ok ? NoContent() : NotFound();
+        }
+
+        // POST /api/receipts/ingest-email
+        // Add [Authorize(Roles = "Admin")] if you want to lock it down.
+        [HttpPost("ingest-email")]
+        public async Task<IActionResult> IngestEmail(CancellationToken ct)
+        {
+            // quick guard: if already running, reject to avoid overlap
+            if (Interlocked.Exchange(ref _ingestionRunning, 1) == 1)
+                return StatusCode(StatusCodes.Status429TooManyRequests, new { ok = false, message = "Ingestion is already running." });
+
+            try
+            {
+                var result = await _ingestionJob.RunOnceAsync(ct);
+                return Ok(new
+                {
+                    ok = true,
+                    examined = result.MessagesExamined,
+                    matched = result.MessagesMatched,
+                    filesSaved = result.FilesSaved,
+                    receiptsCreated = result.ReceiptsCreated,
+                    ranAtUtc = DateTime.UtcNow
+                });
+            }
+            finally
+            {
+                Interlocked.Exchange(ref _ingestionRunning, 0);
+            }
         }
 
         // Helper: batch rewrite list URLs to signed/public URLs

@@ -224,6 +224,8 @@ C:\Users\fs561\code\BizOpsAPI\obj\Debug\net8.0\BizOpsAPI.pdb
 C:\Users\fs561\code\BizOpsAPI\obj\Debug\net8.0\BizOpsAPI.genruntimeconfig.cache
 C:\Users\fs561\code\BizOpsAPI\obj\Debug\net8.0\ref\BizOpsAPI.dll
 C:\Users\fs561\code\TunaiFlow\TunaiFlow\Backend\bin\Debug\net8.0\appsettings.Development.json
+C:\Users\fs561\code\TunaiFlow\TunaiFlow\Backend\bin\Debug\net8.0\appsettings.json
+C:\Users\fs561\code\TunaiFlow\TunaiFlow\Backend\bin\Debug\net8.0\BizOpsAPI.staticwebassets.runtime.json
 C:\Users\fs561\code\TunaiFlow\TunaiFlow\Backend\bin\Debug\net8.0\LatoFont\Lato-Black.ttf
 C:\Users\fs561\code\TunaiFlow\TunaiFlow\Backend\bin\Debug\net8.0\LatoFont\Lato-BlackItalic.ttf
 C:\Users\fs561\code\TunaiFlow\TunaiFlow\Backend\bin\Debug\net8.0\LatoFont\Lato-Bold.ttf
@@ -243,8 +245,6 @@ C:\Users\fs561\code\TunaiFlow\TunaiFlow\Backend\bin\Debug\net8.0\LatoFont\Lato-S
 C:\Users\fs561\code\TunaiFlow\TunaiFlow\Backend\bin\Debug\net8.0\LatoFont\Lato-Thin.ttf
 C:\Users\fs561\code\TunaiFlow\TunaiFlow\Backend\bin\Debug\net8.0\LatoFont\Lato-ThinItalic.ttf
 C:\Users\fs561\code\TunaiFlow\TunaiFlow\Backend\bin\Debug\net8.0\LatoFont\OFL.txt
-C:\Users\fs561\code\TunaiFlow\TunaiFlow\Backend\bin\Debug\net8.0\appsettings.json
-C:\Users\fs561\code\TunaiFlow\TunaiFlow\Backend\bin\Debug\net8.0\BizOpsAPI.staticwebassets.runtime.json
 C:\Users\fs561\code\TunaiFlow\TunaiFlow\Backend\bin\Debug\net8.0\BizOpsAPI.exe
 C:\Users\fs561\code\TunaiFlow\TunaiFlow\Backend\bin\Debug\net8.0\BizOpsAPI.deps.json
 C:\Users\fs561\code\TunaiFlow\TunaiFlow\Backend\bin\Debug\net8.0\BizOpsAPI.runtimeconfig.json
@@ -275,16 +275,10 @@ C:\Users\fs561\code\TunaiFlow\TunaiFlow\Backend\bin\Debug\net8.0\Microsoft.Entit
 C:\Users\fs561\code\TunaiFlow\TunaiFlow\Backend\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Relational.dll
 C:\Users\fs561\code\TunaiFlow\TunaiFlow\Backend\bin\Debug\net8.0\Microsoft.Extensions.Caching.Abstractions.dll
 C:\Users\fs561\code\TunaiFlow\TunaiFlow\Backend\bin\Debug\net8.0\Microsoft.Extensions.Caching.Memory.dll
-C:\Users\fs561\code\TunaiFlow\TunaiFlow\Backend\bin\Debug\net8.0\Microsoft.Extensions.Configuration.dll
 C:\Users\fs561\code\TunaiFlow\TunaiFlow\Backend\bin\Debug\net8.0\Microsoft.Extensions.Configuration.Abstractions.dll
-C:\Users\fs561\code\TunaiFlow\TunaiFlow\Backend\bin\Debug\net8.0\Microsoft.Extensions.Configuration.FileExtensions.dll
-C:\Users\fs561\code\TunaiFlow\TunaiFlow\Backend\bin\Debug\net8.0\Microsoft.Extensions.Configuration.Json.dll
 C:\Users\fs561\code\TunaiFlow\TunaiFlow\Backend\bin\Debug\net8.0\Microsoft.Extensions.DependencyInjection.dll
 C:\Users\fs561\code\TunaiFlow\TunaiFlow\Backend\bin\Debug\net8.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
 C:\Users\fs561\code\TunaiFlow\TunaiFlow\Backend\bin\Debug\net8.0\Microsoft.Extensions.DependencyModel.dll
-C:\Users\fs561\code\TunaiFlow\TunaiFlow\Backend\bin\Debug\net8.0\Microsoft.Extensions.FileProviders.Abstractions.dll
-C:\Users\fs561\code\TunaiFlow\TunaiFlow\Backend\bin\Debug\net8.0\Microsoft.Extensions.FileProviders.Physical.dll
-C:\Users\fs561\code\TunaiFlow\TunaiFlow\Backend\bin\Debug\net8.0\Microsoft.Extensions.FileSystemGlobbing.dll
 C:\Users\fs561\code\TunaiFlow\TunaiFlow\Backend\bin\Debug\net8.0\Microsoft.Extensions.Logging.dll
 C:\Users\fs561\code\TunaiFlow\TunaiFlow\Backend\bin\Debug\net8.0\Microsoft.Extensions.Logging.Abstractions.dll
 C:\Users\fs561\code\TunaiFlow\TunaiFlow\Backend\bin\Debug\net8.0\Microsoft.Extensions.Options.dll

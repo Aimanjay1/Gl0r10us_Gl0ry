@@ -17,21 +17,29 @@ namespace BizOpsAPI.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
+            // ===== Core precision (money totals) =====
             modelBuilder.Entity<InvoiceItem>()
                 .Property(i => i.LineTotal)
                 .HasPrecision(18, 2);
+
             modelBuilder.Entity<Invoice>()
                 .Property(i => i.TotalAmount)
                 .HasPrecision(18, 2);
+
             modelBuilder.Entity<Expense>()
                 .Property(e => e.TotalPrice)
                 .HasPrecision(18, 2);
+
             modelBuilder.Entity<Revenue>()
                 .Property(r => r.Amount)
                 .HasPrecision(18, 2);
 
-            // relationships
+            // ===== Users =====
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
+
+            // ===== Relationships =====
             modelBuilder.Entity<Client>()
                 .HasOne(c => c.User)
                 .WithMany(u => u.Clients)
@@ -52,16 +60,44 @@ namespace BizOpsAPI.Data
                 .WithMany(i => i.Receipts)
                 .HasForeignKey(r => r.InvoiceId);
 
-            modelBuilder.Entity<Expense>()
-                .HasOne(e => e.User)
-                .WithMany(u => u.Expenses)
-                .HasForeignKey(e => e.UserId);
-
+            // If you truly want SET NULL on delete for Revenue → ensure Revenue.InvoiceId is nullable (int?)
             modelBuilder.Entity<Revenue>()
                 .HasOne(r => r.Invoice)
                 .WithMany()
                 .HasForeignKey(r => r.InvoiceId)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            // ===== Receipt: indexes & constraints =====
+            modelBuilder.Entity<Receipt>(e =>
+            {
+                // Indexes for frequent filters / ordering
+                e.HasIndex(r => r.InvoiceId);
+                e.HasIndex(r => r.UploadedAt);
+                e.HasIndex(r => r.Sha256Hex);
+
+                // Composite index to speed up de-dupe checks per invoice
+                e.HasIndex(r => new { r.InvoiceId, r.Sha256Hex });
+
+                // Column sizes (avoid unlimited string columns)
+                e.Property(r => r.ReceiptUrl)
+                    .IsRequired()
+                    .HasMaxLength(2048);
+                e.Property(r => r.OriginalFileName)
+                    .HasMaxLength(512);
+                e.Property(r => r.ContentType)
+                    .HasMaxLength(255);
+                e.Property(r => r.FromAddress)
+                    .HasMaxLength(320); // RFC-compliant max for email length
+
+                // ✅ EF Core 8+ way to add a check constraint (Postgres-safe quoting)
+                e.ToTable(t =>
+                {
+                    t.HasCheckConstraint(
+                        "CK_Receipt_SizeBytes_NonNegative",
+                        "\"SizeBytes\" IS NULL OR \"SizeBytes\" >= 0"
+                    );
+                });
+            });
 
             base.OnModelCreating(modelBuilder);
         }
