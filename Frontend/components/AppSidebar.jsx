@@ -16,7 +16,7 @@ import { useIsMobile } from "@/hooks/use-mobile"
 import { Separator } from "./ui/separator";
 
 export function AppSidebar(request) {
-    console.log(request)
+    // console.log(request)
     const sidebar = useSidebar();
     const isMobile = useIsMobile();
 

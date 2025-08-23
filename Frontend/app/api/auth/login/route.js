@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:5226";
 
 export async function POST(request) {
-    console.log("working, returning✨✨✨")
+    // console.log("working, returning✨✨✨")
     try {
         const { email, password } = await request.json();
         // console.log("✨✨email, password✨✨", email, password)
@@ -13,7 +13,7 @@ export async function POST(request) {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, password }),
         });
-        console.log("✨✨res✨✨", res)
+        // console.log("✨✨res✨✨", res)
 
         if (!res.ok) {
             let error = "Login failed";
