@@ -21,6 +21,8 @@ export default function Login() {
     });
 
     if (response.ok) {
+      // Set flag for success alert after redirect
+      window.localStorage.setItem("loginSuccess", "1");
       router.replace("/");
     } else {
       alert("Login failed. Please check your credentials.");

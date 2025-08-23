@@ -1,11 +1,21 @@
+"use client";
 // import Image from "next/image";
 
+import { useEffect } from "react";
 import { ChartAreaInteractive } from "@/components/chart-area-interactive";
 import { DataTable } from "@/components/data-table";
 import { SectionCards } from "@/components/section-cards";
 import data from "./data.json"
 
 export default function Home() {
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      if (window.localStorage.getItem("loginSuccess")) {
+        alert("Login successful!");
+        window.localStorage.removeItem("loginSuccess");
+      }
+    }
+  }, []);
   return (
     <>
       <div className="flex flex-1 flex-col">
@@ -22,3 +32,4 @@ export default function Home() {
     </>
   );
 }
+
