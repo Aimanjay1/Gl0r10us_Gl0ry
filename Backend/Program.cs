@@ -8,11 +8,17 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.HttpOverrides;   // ✅ for proxy headers
 using Supabase;
-using QuestPDF.Infrastructure; // ✅ NEW
+using QuestPDF.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// 👉 Bind Kestrel to Render's dynamic PORT (fallback 8080 for local)
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+
+// ===== Log DB host:port briefly (no secrets) =====
 var raw = builder.Configuration.GetConnectionString("DefaultConnection") ?? "<null>";
 try
 {
@@ -24,7 +30,7 @@ catch
     Console.WriteLine($"[DB] Raw connection string (couldn't parse): {raw}");
 }
 
-// Global Npgsql behavior (use modern timestamp semantics)
+// Global Npgsql behavior
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", false);
 
 // ===== Controllers & Swagger =====
@@ -33,11 +39,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new() { Title = "BizOpsAPI", Version = "v1" });
-
-    // Make Swagger use same origin/scheme
-    c.AddServer(new OpenApiServer { Url = "/" });
-
-    // Bearer scheme
+    c.AddServer(new OpenApiServer { Url = "/" }); // relative
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "Paste the raw JWT (no 'Bearer ' prefix).",
@@ -47,7 +49,6 @@ builder.Services.AddSwaggerGen(c =>
         Scheme = "bearer",
         BearerFormat = "JWT"
     });
-
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
@@ -58,22 +59,17 @@ builder.Services.AddSwaggerGen(c =>
             Array.Empty<string>()
         }
     });
-}); // <-- keep this semicolon
+});
 
 // ===== DbContext =====
-// Tip: In your connection string, prefer PgBouncer port 6543 and add:
-// "PreferSimpleProtocol=true; Command Timeout=30; Maximum Pool Size=50"
+// (PgBouncer-friendly options are fine; keep your string in env)
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseNpgsql(
         builder.Configuration.GetConnectionString("DefaultConnection"),
         npg =>
         {
-            // Transient fault handling + command timeout
-            npg.EnableRetryOnFailure(
-                maxRetryCount: 5,
-                maxRetryDelay: TimeSpan.FromSeconds(2),
-                errorCodesToAdd: null);
+            npg.EnableRetryOnFailure(maxRetryCount: 5, maxRetryDelay: TimeSpan.FromSeconds(2), errorCodesToAdd: null);
             npg.CommandTimeout(30);
         });
 
@@ -98,31 +94,22 @@ builder.Services.AddScoped<IRevenueRepository, RevenueRepository>();
 // ===== Services =====
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IClientService, ClientService>();
-builder.Services.AddScoped<IInvoiceService, InvoiceService>();   
+builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IExpenseService, ExpenseService>();
 builder.Services.AddScoped<IReceiptService, ReceiptService>();
 builder.Services.AddScoped<IRevenueService, RevenueService>();
 
-// ===== Supabase Storage (NEW) =====
+// ===== Supabase Storage =====
 builder.Services.Configure<SupabaseSettings>(builder.Configuration.GetSection("Supabase"));
-
 builder.Services.AddSingleton<Supabase.Client>(sp =>
 {
     var cfg = sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<SupabaseSettings>>().Value;
-    var client = new Supabase.Client(cfg.Url, cfg.ServiceRoleKey, new SupabaseOptions
-    {
-        AutoConnectRealtime = false
-    });
-    // Initialize once so Storage is ready
+    var client = new Supabase.Client(cfg.Url, cfg.ServiceRoleKey, new SupabaseOptions { AutoConnectRealtime = false });
     client.InitializeAsync().GetAwaiter().GetResult();
     return client;
 });
-
-// Use Supabase-backed file storage (disable LocalFileStorage)
 builder.Services.AddSingleton<IFileStorage, SupabaseFileStorage>();
-
-// Helper to turn stored paths into public/signed URLs
 builder.Services.AddScoped<ReceiptLinkService>();
 
 // ===== Current user accessor =====
@@ -132,16 +119,11 @@ builder.Services.AddScoped<ICurrentUser, CurrentUser>();
 // ===== Config binding =====
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
-
-// ===== Email ingestion (trigger-on-click) =====
 builder.Services.Configure<EmailIngestionSettings>(builder.Configuration.GetSection("EmailIngestion"));
-builder.Services.AddScoped<IEmailReceiptIngestionJob, EmailReceiptIngestionJob>();   
+builder.Services.AddScoped<IEmailReceiptIngestionJob, EmailReceiptIngestionJob>();
 
-// (Optional) allow larger multipart uploads (e.g., 25 MB receipts)
-builder.Services.Configure<FormOptions>(o =>
-{
-    o.MultipartBodyLengthLimit = 25 * 1024 * 1024; // 25 MB
-});
+// (Optional) larger uploads
+builder.Services.Configure<FormOptions>(o => { o.MultipartBodyLengthLimit = 25 * 1024 * 1024; });
 
 // ===== JWT Auth =====
 var jwt = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>()
@@ -159,7 +141,7 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
-    options.RequireHttpsMetadata = false; // set true in production behind HTTPS
+    options.RequireHttpsMetadata = false; // OK behind Render proxy
     options.SaveToken = true;
     options.TokenValidationParameters = new TokenValidationParameters
     {
@@ -178,28 +160,34 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("Dev", policy =>
-    {
-        policy.AllowAnyOrigin()
-              .AllowAnyHeader()
-              .AllowAnyMethod();
-    });
+        policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 });
 
 var app = builder.Build();
 
-// ✅ QuestPDF: set license mode once on startup
+// ✅ QuestPDF license
 QuestPDF.Settings.License = LicenseType.Community;
 
+// ✅ Respect Render's X-Forwarded-* headers (TLS terminated at proxy)
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
+
+// Swagger only in dev (optional: enable in prod if you want)
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// ❌ Avoid HTTPS redirect loop on Render (TLS is at proxy). Keep only in dev.
+if (app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseCors("Dev");
-
 app.UseStaticFiles();
 
 app.UseAuthentication();
@@ -207,20 +195,24 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.MapGet("/api/invoices/{id:int}/pdf", async (int id, IInvoiceService svc) =>
-{
-    var pdf = await svc.GenerateInvoicePdfAsync(id);
-    var fileName = $"invoice_{id}.pdf";
-    return Results.File(pdf, "application/pdf", fileName);
-});
+// Healthcheck for Render
+app.MapGet("/healthz", () => Results.Ok("ok"));
 
-// Apply EF migrations at startup
-using (var scope = app.Services.CreateScope())
+// Apply EF migrations at startup (safe logging, won’t crash silent)
+try
 {
+    using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    db.Database.Migrate();
+    app.Logger.LogInformation("DB: trying to connect & migrate…");
+    await db.Database.CanConnectAsync();
+    await db.Database.MigrateAsync();
+    app.Logger.LogInformation("DB: migrations OK");
 }
-
-app.MapGet("/healthz", () => "ok"); // Render healthcheck
+catch (Exception ex)
+{
+    app.Logger.LogError(ex, "DB: connection/migration failed at startup");
+    // Optional: rethrow if you want hard-fail on DB issues:
+    // throw;
+}
 
 app.Run();
