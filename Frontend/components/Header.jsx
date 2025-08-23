@@ -3,6 +3,7 @@ import { Avatar } from "@/components/ui/avatar";
 import Link from "next/link";
 import { SidebarTrigger } from "./ui/sidebar";
 import { useUser } from "./UserProvider";
+import { useEffect } from "react";
 
 export default function Header(props) {
     const { user, refresh } = useUser()
@@ -19,11 +20,24 @@ export default function Header(props) {
             </div>
 
             <div className=" pr-4 flex items-center gap-2" >
-                <Avatar className={"bg-primary h-6 w-6 lg:h-8 lg:w-8"} src={null} />
-                <div className="text-sm flex flex-col justify-center">
-                    <p className="font-bold ">{user}</p>
-                    <p className="text-ellipsis">{user ? (user.email || "Shit") : "Shit"}</p>
-                </div>
+                {user && user.email && user.name ? (
+                    <>
+                        <Avatar className={"bg-accent border-2 h-6 w-6 lg:h-8 lg:w-8"} src={null}>{user ? (user.name || "-") : "-"}</Avatar>
+                        <div className="text-sm flex flex-col justify-center">
+                            <p className="font-bold ">{user ? (user.name || "-") : "-"}</p>
+                            <p className="text-ellipsis">{user ? (user.email || "-") : "-"}</p>
+                        </div>
+                    </>
+                ) : (
+                    <>
+                        <Avatar className={"bg-accent border-2 h-6 w-6 lg:h-8 lg:w-8"} src={null}>Unauthorized</Avatar>
+                        <div className="text-sm flex flex-col justify-center">
+                            <p className="font-bold ">Unauthorized</p>
+                            <p className="text-ellipsis">Unauthorized</p>
+                        </div>
+                    </>
+                )
+                }
             </div>
         </div>
     )
