@@ -33,15 +33,16 @@ export async function POST(request) {
     body.clientId = Number(body.clientId);
     body.userId = Number(body.userId);
     console.log("body", body)
+    const jsonbody = JSON.stringify(body)
     const res = await fetch(`${BACKEND_URL}/api/Invoices`, {
         headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
         },
         method: "POST",
-        body: JSON.stringify(body),
+        body: jsonbody,
     });
-    console.log(res)
+    console.log(jsonbody)
 
     // If Flask always returns JSON, use:
     const data = await res.json().catch(() => null);

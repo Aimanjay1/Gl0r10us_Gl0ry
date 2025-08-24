@@ -15,6 +15,7 @@ import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { useUser } from "@/components/UserProvider";
 import { ClientSelectCombobox } from "@/components/ClientSelectCombobox";
+import { toUtcIsoWithCurrentTime } from "@/utils/date";
 
 function Cell({ children, className = "", ...rest }) {
     return (
@@ -77,13 +78,16 @@ export default function AddInvoice() {
     const { user } = useUser();
 
     async function handleSubmit() {
-        console.log("user", user)
         const draftData = {
-            clientId: form.getValues("clientId"),
+            clientId: Number(form.getValues("clientId")),
             userId: user.sub,
-            orderDate: form.getValues("orderDate"),
-            dueDate: form.getValues("dueDate"),
-            items,
+            orderDate: toUtcIsoWithCurrentTime(form.getValues("orderDate")),
+            dueDate: toUtcIsoWithCurrentTime(form.getValues("dueDate")),
+            items: items.map(i => ({
+                itemName: i.itemName,
+                unitPrice: Number(i.unitPrice) || 0,
+                quantity: Number(i.quantity) || 0
+            })),
         };
         try {
             const res = await fetch(`/api/invoices`, {

@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { PageLayout, PageButton, TH, Cell } from "@/components/PageCommon";
+import { formatDate, formatDateOnly } from "@/utils/date"
 import {
     Table,
     TableBody,
@@ -64,9 +65,7 @@ export default async function Invoice(props) {
                                 <TableRow className={"bg-accent rounded-xl"}>
                                     <TH>Client ID</TH>
                                     <TH>Status</TH>
-                                    <TH>Order Date
-
-                                    </TH>
+                                    <TH>Order Date</TH>
                                     <TH>Due Date</TH>
                                     <TH>Generate Invoice</TH>
                                     <TH>Send an email</TH>
@@ -84,10 +83,10 @@ export default async function Invoice(props) {
                                                 {invoice.status}
                                             </Cell>
                                             <Cell>
-                                                {invoice.orderDate}
+                                                {formatDateOnly(invoice.orderDate)}
                                             </Cell>
                                             <Cell>
-                                                {invoice.dueDate}
+                                                {formatDateOnly(invoice.dueDate)}
                                             </Cell>
                                             <Cell>
                                                 {/* <InvoiceButton> */}

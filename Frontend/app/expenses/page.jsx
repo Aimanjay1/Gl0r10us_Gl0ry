@@ -11,6 +11,7 @@ import {
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { cookies } from "next/headers";
+import { Button } from "@/components/ui/button";
 
 function ExpenseButton({ children, className, variant }) {
     variant = (variant ? "bg-" + variant : "bg-identity-dillute hover:bg-identity")
@@ -58,8 +59,7 @@ export default async function Expenses(props) {
                                     <TH>Quantity</TH>
                                     <TH>Unit Price</TH>
                                     <TH>Receipt</TH>
-                                    <TH />
-                                    <TH />
+                                    <TH>Actions</TH>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -67,24 +67,22 @@ export default async function Expenses(props) {
                                     Expenses.map((Expense, index) => (
                                         <TableRow key={index} >
                                             <Cell>
-                                                {Expense.ExpenseId}
+                                                {Expense.description}
                                             </Cell>
                                             <Cell>
-                                                {Expense.Category}
+                                                {Expense.amount}
                                             </Cell>
                                             <Cell>
-                                                {Expense.Quantity}
+                                                {Expense.amount}
                                             </Cell>
                                             <Cell>
-                                                {Expense.UnitPrice}
+                                                {Expense.date}
                                             </Cell>
                                             <Cell>
-                                                <Link href={Expense.ReceiptUrl} className="text-identity-dillute hover:text-identity">{Expense.ReceiptUrl}</Link>
+                                                <Link href={Expense.ReceiptUrl || ""} className="text-identity-dillute hover:text-identity">{Expense.ReceiptUrl}</Link>
                                             </Cell>
                                             <Cell>
                                                 <ExpenseButton>Edit</ExpenseButton>
-                                            </Cell>
-                                            <Cell>
                                                 <ExpenseButton variant={"destructive"}>Delete</ExpenseButton>
                                             </Cell>
                                         </TableRow>

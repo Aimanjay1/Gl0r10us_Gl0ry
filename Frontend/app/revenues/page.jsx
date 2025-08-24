@@ -11,6 +11,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { RadioGroupDemo } from "@/components/RadioGroupDemo";
 import { cookies } from "next/headers";
+import Link from "next/link";
 
 
 function RevenueButton({ children, className, variant }) {
@@ -63,7 +64,7 @@ export default async function Revenues(props) {
                                 <TableHeader >
                                     <TableRow className={"bg-accent rounded-xl"}>
                                         <TH>Invoice ID</TH>
-                                        <TH>Item</TH>
+                                        <TH>Invoice</TH>
                                         <TH>Total Payment</TH>
                                     </TableRow>
                                 </TableHeader>
@@ -72,13 +73,14 @@ export default async function Revenues(props) {
                                         Revenues.map((Revenue, index) => (
                                             <TableRow key={index} >
                                                 <Cell>
-                                                    {Revenue.InvoiceId}
+                                                    {Revenue.invoiceId}
                                                 </Cell>
                                                 <Cell>
-                                                    {Revenue.Item}
+                                                    <Link href={`/invoices/${Revenue.invoiceId}`}>
+                                                    </Link>
                                                 </Cell>
                                                 <Cell>
-                                                    {Revenue.Amount}
+                                                    {Revenue.total}
                                                 </Cell>
                                             </TableRow>
                                         ))
@@ -111,7 +113,7 @@ export default async function Revenues(props) {
                                 <TableHeader >
                                     <TableRow className={"bg-accent rounded-xl"}>
                                         <TH>Invoice ID</TH>
-                                        <TH>Item</TH>
+                                        <TH>Invoice</TH>
                                         <TH>Total Payment</TH>
                                     </TableRow>
                                 </TableHeader>
@@ -120,6 +122,6 @@ export default async function Revenues(props) {
                         </>)
                 }
             </div>
-        </PageLayout>
+        </PageLayout >
     )
 }
