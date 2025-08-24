@@ -1,0 +1,45 @@
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+build/
+out/
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# VS Code
+.vscode/
+
+# Rider
+.idea/
+
+# Visual Studio
+.vs/
+
+# ASP.NET
+appsettings*.json
+
+# Node modules
+node_modules/
+
+# Environment files
+.env
+
+# Docker
+Dockerfile
+docker-compose.yml
+
+# Others
+*.log
+*.db
+*.sqlite
+
+# Git
+.git
