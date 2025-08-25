@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 
 const COOKIE_NAME = "session";
-const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:5226";
 
 export async function GET(request) {
     const id = request.nextUrl.searchParams.get("userId");
@@ -9,7 +8,7 @@ export async function GET(request) {
     const token = request.cookies.get(COOKIE_NAME)?.value;
     if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const res = await fetch(`${BACKEND_URL}/api/Invoices/user/${id}`, {
+    const res = await fetch(`${process.env.BACKEND_URL}/api/Invoices/user/${id}`, {
         headers: {
             Authorization: `Bearer ${token}`,
         },
@@ -34,7 +33,7 @@ export async function POST(request) {
     body.userId = Number(body.userId);
     console.log("body", body)
     const jsonbody = JSON.stringify(body)
-    const res = await fetch(`${BACKEND_URL}/api/Invoices`, {
+    const res = await fetch(`${process.env.BACKEND_URL}/api/Invoices`, {
         headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",

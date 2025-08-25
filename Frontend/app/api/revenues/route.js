@@ -25,8 +25,7 @@ export async function POST(request) {
     const token = request.cookies.get(process.env.COOKIE_NAME)?.value;
     // console.log("token", token)
     // if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    const url = `${process.env.BACKEND_URL}/api/Revenues`
-    const res = await fetch(url, {
+    const res = await fetch(`${process.env.BACKEND_URL}/api/Revenues`, {
         headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",

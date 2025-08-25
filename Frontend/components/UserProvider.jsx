@@ -1,16 +1,17 @@
+// /UserProvider.jsx
 "use client";
 import { useRouter } from "next/navigation";
 import { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react";
 
 const UserContext = createContext(null);
 
-export function UserProvider({ children, initialUser = null }) {
+export function UserProvider({ children, initialUser = null, fallback = null }) {
     const router = useRouter();
     const [user, setUser] = useState(initialUser);
     const [loading, setLoading] = useState(!initialUser);
+    const [ready, setReady] = useState(!!initialUser); // NEW: block children until first check completes
     const [error, setError] = useState(null);
 
-    // Fetch current user info
     const fetchMe = useCallback(async () => {
         setLoading(true);
         setError(null);
@@ -27,14 +28,15 @@ export function UserProvider({ children, initialUser = null }) {
             setUser(null);
         } finally {
             setLoading(false);
+            setReady(true); // NEW
         }
     }, []);
 
     useEffect(() => {
         if (!initialUser) fetchMe();
+        else setReady(true);
     }, [initialUser, fetchMe]);
 
-    // Login helper
     const login = useCallback(
         async (email, password) => {
             setLoading(true);
@@ -63,15 +65,11 @@ export function UserProvider({ children, initialUser = null }) {
         [fetchMe]
     );
 
-    // Logout helper
     const logout = useCallback(async () => {
         setLoading(true);
         setError(null);
         try {
-            await fetch("/api/auth/logout", {
-                method: "POST",
-                credentials: "include",
-            });
+            await fetch("/api/auth/logout", { method: "POST", credentials: "include" });
         } catch (e) {
             setError(e);
         } finally {
@@ -81,18 +79,37 @@ export function UserProvider({ children, initialUser = null }) {
         }
     }, [router]);
 
+    // NEW: a fetch helper that auto-logs-out on 401
+    const authedFetch = useCallback(
+        async (input, init = {}) => {
+            const res = await fetch(input, { credentials: "include", ...init });
+            if (res.status === 401) {
+                // Session expired while browsing — cleanly log out and redirect
+                await logout();
+                throw new Error("Unauthorized");
+            }
+            return res;
+        },
+        [logout]
+    );
+
     const value = useMemo(
         () => ({
             user,
             isAuthenticated: !!user,
             loading,
+            ready,       // NEW
             error,
             login,
             logout,
             refresh: fetchMe,
+            authedFetch, // NEW
         }),
-        [user, loading, error, login, logout, fetchMe]
+        [user, loading, ready, error, login, logout, fetchMe, authedFetch]
     );
+
+    // NEW: block children until first auth check completes (prevents UI flash)
+    if (!ready) return fallback ?? <div className="flex items-center justify-center p-8">Loading…</div>;
 
     return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 }
@@ -101,4 +118,12 @@ export function useUser() {
     const ctx = useContext(UserContext);
     if (!ctx) throw new Error("useUser must be used within UserProvider");
     return ctx;
+}
+
+// Optional: convenience wrapper to guard trees
+export function RequireAuth({ children, fallback = null }) {
+    const { ready, isAuthenticated, loading } = useUser();
+    if (!ready || loading) return fallback ?? <div className="p-8">Loading…</div>;
+    if (!isAuthenticated) return null; // middleware will redirect anyway
+    return children;
 }

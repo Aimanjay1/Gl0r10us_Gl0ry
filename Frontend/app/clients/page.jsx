@@ -13,7 +13,6 @@ import { Badge } from "@/components/ui/badge";
 import { cookies } from "next/headers";
 import { useUser } from "@/components/UserProvider";
 
-const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:5226";
 
 export default async function Clients(props) {
     const cookieStore = await cookies();
@@ -116,12 +115,3 @@ export default async function Clients(props) {
         </PageLayout>
     )
 }
-
-const dummyCustomers = [
-    {
-        "": 2,
-        "": 4,
-        "": "bruh",
-        "": "bruh",
-        "": "bruh@gmail.com"
-    },];

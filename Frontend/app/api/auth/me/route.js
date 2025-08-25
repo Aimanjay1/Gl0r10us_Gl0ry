@@ -1,12 +1,11 @@
 import { NextResponse } from "next/server";
 
-const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:5226";
 
 export async function GET(request) {
     try {
         const token = request.cookies.get(process.env.COOKIE_NAME)?.value;
 
-        const res = await fetch(`${BACKEND_URL}/api/Auth/me`, {
+        const res = await fetch(`${process.env.BACKEND_URL}/api/Auth/me`, {
             method: "GET",
             headers: {
                 Authorization: `Bearer ${token}`,
