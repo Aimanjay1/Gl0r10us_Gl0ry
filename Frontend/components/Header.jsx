@@ -30,11 +30,13 @@ export default function Header(props) {
                     </>
                 ) : (
                     <>
-                        <Avatar className={"bg-accent border-2 h-6 w-6 lg:h-8 lg:w-8"} src={null}>Unauthorized</Avatar>
-                        <div className="text-sm flex flex-col justify-center">
-                            <p className="font-bold ">Unauthorized</p>
-                            <p className="text-ellipsis">Unauthorized</p>
-                        </div>
+                        <Link href="/profile" className="pr-4 flex items-center gap-2 hover:cursor-pointer">
+                            <Avatar className={"bg-accent border-2 h-6 w-6 lg:h-8 lg:w-8"} src={null}>Unauthorized</Avatar>
+                                <div className="text-sm flex flex-col justify-center">
+                                    <p className="font-bold ">Unauthorized</p>
+                                    <p className="text-ellipsis">Unauthorized</p>
+                                </div>
+                        </Link>
                     </>
                 )
                 }
